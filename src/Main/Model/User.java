@@ -3,6 +3,7 @@ package Main.Model;
 import Main.Services.PasswordHasher;
 
 import java.util.Date;
+import java.util.UUID;
 
 public class User {
     private String id;
@@ -14,8 +15,8 @@ public class User {
     private String bio;
     private final long createAt;
 
-    public User(String id, String name, String lastName, String username, String password, String bio) {
-        this.id = id;
+    public User(String name, String lastName, String username, String password, String bio) {
+        this.id = String.valueOf(UUID.randomUUID());
         this.name = name;
         this.lastName = lastName;
         this.username = username;

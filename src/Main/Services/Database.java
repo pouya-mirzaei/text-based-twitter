@@ -4,7 +4,9 @@ import Main.Model.User;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 public class Database {
 
@@ -35,7 +37,7 @@ public class Database {
 
         } catch (IOException e) {
             users = new ArrayList<>();
-            User mainUser = new User("pouya", "mizaei", "admin", "admin", "admin", "The official account of the admin");
+            User mainUser = new User("pouya", "mizaei", "admin", "admin", "The official account of the admin");
             mainUser.setRole("ADMIN");
             users.add(mainUser);
 
@@ -46,7 +48,7 @@ public class Database {
 
     }
 
-    private void updateUsersDb(List<User> users) {
+    public void updateUsersDb(List<User> users) {
         BufferedWriter writer;
 
         try {
@@ -67,7 +69,7 @@ public class Database {
             writer.close();
 
         } catch (IOException e) {
-            // Do Nothing
+            //
         }
 
 
