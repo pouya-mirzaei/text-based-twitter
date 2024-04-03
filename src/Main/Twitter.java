@@ -1,5 +1,6 @@
 package Main;
 
+import Main.Controler.UserController;
 import Main.Services.Authentication;
 import Main.Services.Database;
 import Main.View.Colors;
@@ -12,12 +13,18 @@ public class Twitter {
 
     public static Scanner scanner;
     public static Database db;
-    private static Typewriter tw = Menu.tw;
+    public static Typewriter tw = Menu.tw;
+    public static Menu menu;
+    public static UserController userController;
+    public static Authentication auth;
 
 
     public Twitter() {
         scanner = new Scanner(System.in);
         db = new Database();
+        menu = new Menu();
+        userController = new UserController();
+        auth = new Authentication();
     }
 
     public static void run() {
@@ -30,7 +37,6 @@ public class Twitter {
     }
 
     private static void authMenu() {
-        Menu menu = new Menu();
 
         String[] mainMenu = {"Login", "Sign Up", "Exit"};
         String message = "Welcome to my" + Colors.CYAN + " Twitter app " + Colors.RESET;
@@ -72,8 +78,7 @@ public class Twitter {
     }
 
     private static void handleSignUp() {
-        tw.typeWithColor("Sign up bitch ...", Colors.GREEN, false);
-
+        auth.signupMenu();
     }
 
 

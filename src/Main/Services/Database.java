@@ -39,7 +39,6 @@ public class Database {
             mainUser.setRole("ADMIN");
             users.add(mainUser);
 
-            System.out.println(mainUser);
 
             updateUsersDb(users);
             return users;
@@ -47,13 +46,13 @@ public class Database {
 
     }
 
-    private void updateUsersDb(List<User> newUsers) {
+    private void updateUsersDb(List<User> users) {
         BufferedWriter writer;
 
         try {
             writer = new BufferedWriter(new FileWriter("users.txt"));
 
-            for (User user : newUsers) {
+            for (User user : users) {
                 if (user == null) continue;
 
                 writer.write(user.getId() + "::");

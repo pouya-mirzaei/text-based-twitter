@@ -1,5 +1,7 @@
 package Main.Model;
 
+import Main.Services.PasswordHasher;
+
 import java.util.Date;
 
 public class User {
@@ -17,7 +19,7 @@ public class User {
         this.name = name;
         this.lastName = lastName;
         this.username = username;
-        this.password = password;
+        this.password = PasswordHasher.hashPassword(password);
         this.bio = bio;
         this.role = "USER";
         this.createAt = new Date().getTime();
