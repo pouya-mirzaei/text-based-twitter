@@ -10,8 +10,6 @@ public class Typewriter {
 
 
     public void type(String message) {
-
-
         try {
             for (char c : message.toCharArray()) {
                 System.out.print(c);
@@ -27,8 +25,6 @@ public class Typewriter {
     }
 
     public void typeWithColor(String message, String color, boolean goToNextLine) {
-
-
         try {
             for (char c : message.toCharArray()) {
                 System.out.print(color + c + Colors.RESET);
