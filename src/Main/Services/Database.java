@@ -1,6 +1,6 @@
-package Services;
+package Main.Services;
 
-import Model.User;
+import Main.Model.User;
 
 import java.io.*;
 import java.util.ArrayList;

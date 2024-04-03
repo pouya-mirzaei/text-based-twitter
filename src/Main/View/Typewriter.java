@@ -1,4 +1,4 @@
-package View;
+package Main.View;
 
 public class Typewriter {
 

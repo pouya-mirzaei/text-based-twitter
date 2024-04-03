@@ -1,6 +1,6 @@
-package Services;
+package Main.Services;
 
-import Model.User;
+import Main.Model.User;
 
 public class Authentication {
     public static String currentUserId = null;

@@ -1,9 +1,11 @@
-import Services.Database;
-import View.Colors;
-import View.Menu;
-import View.Typewriter;
+package Main;
 
-import java.util.Date;
+import Main.Services.Authentication;
+import Main.Services.Database;
+import Main.View.Colors;
+import Main.View.Menu;
+import Main.View.Typewriter;
+
 import java.util.Scanner;
 
 public class Twitter {
@@ -19,6 +21,15 @@ public class Twitter {
     }
 
     public static void run() {
+
+        if (!Authentication.isUserLoggedIn()) {
+            authMenu();
+        }
+
+
+    }
+
+    private static void authMenu() {
         Menu menu = new Menu();
 
         String[] mainMenu = {"Login", "Sign Up", "Exit"};
