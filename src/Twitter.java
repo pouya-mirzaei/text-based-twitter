@@ -1,17 +1,21 @@
+import Services.Database;
 import View.Colors;
 import View.Menu;
 import View.Typewriter;
 
+import java.util.Date;
 import java.util.Scanner;
 
 public class Twitter {
 
     public static Scanner scanner;
+    public static Database db;
     private static Typewriter tw = Menu.tw;
 
 
     public Twitter() {
         scanner = new Scanner(System.in);
+        db = new Database();
     }
 
     public static void run() {

@@ -1,13 +1,16 @@
 package View;
 
 import java.io.IOException;
+import java.util.Date;
 
 public class Menu {
     public static Typewriter tw = new Typewriter(5);
 
     public void displayMenu(String[] menuItems, String message) {
         clearScreen();
+
         tw.type(message);
+
         int counter = 1;
 
         for (String item : menuItems) {
