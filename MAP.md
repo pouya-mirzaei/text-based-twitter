@@ -3,23 +3,24 @@
 ## Pages :
 
 ---
- 
+
 ### Authorized User
 
 - ### Home
-  -  [ ] Show most 5 recent Tweets
-    - Each Tweet :
-      - [ ]  showing the Tweet( Including nested comments) 
-      - [ ] Liking a Tweet
-      - [ ] Commenting on the post 
+    -  [ ] Show most 5 recent Tweets
+        - Each Tweet :
+            - [ ]  showing the Tweet( Including nested comments)
+            - [ ] Liking a Tweet
+            - [ ] Commenting on the post
 - ### Search
-  - [ ] Search By Username
-  - [ ] Search By Tweet
+    - [ ] Search By Username
+    - [ ] Search By Tweet
 - ### Tweet a post
-  - [ ] Get the Tweet content and post it
+    - [ ] Get the Tweet content and post it
 - ### Profile
-  1. Show profile info
-  2. #### Edit profile
+    1. Show profile info
+    2. #### Edit profile
+
     - [ ] Change username
     - [ ] Change password
     - [ ] Change displaying name
@@ -27,8 +28,8 @@
 
 ---
 
-### Unauthorized User 
+### Unauthorized User
 
-- #### Login
-- #### Sign Up
-- #### Exit
+- [ ]  Login
+- [x]  Sign Up
+- [x] Exit

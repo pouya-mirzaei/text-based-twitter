@@ -33,25 +33,25 @@ public class Authentication {
         tw.typeWithColor("Signup Menu Menu", Colors.CYAN, true);
 
         // name
-        tw.typeWithColor("Tell us your name =>", Colors.PURPLE, true);
+        tw.typeWithColor("Tell us your name =>", Colors.WHITE, true);
         String name = scanner.nextLine();
 
         // last name
-        tw.typeWithColor("Hey  " + name + "! what is your last name ? =>", Colors.PURPLE, true);
+        tw.typeWithColor("Hey  " + name + "! what is your last name ? =>", Colors.WHITE, true);
         String lastName = scanner.nextLine();
 
         // username
         String username;
         do {
             // Prompt the user for a username
-            tw.typeWithColor("Create a username for yourself => ", Colors.PURPLE, true);
+            tw.typeWithColor("Create a username for yourself => ", Colors.WHITE, true);
             username = scanner.nextLine();
 
             // Validate the username format using regex
-            if (!isValidUsername(username)) {
+            if (!isInputValid(username, "^[a-zA-Z0-9_-]{3,16}$")) {
                 tw.typeWithColor("Invalid username format.\nUsername must contain only alphanumeric characters, underscores, or hyphens, and be between 3 and 16 characters long.", Colors.RED, true);
             }
-        } while (!isValidUsername(username));
+        } while (!isInputValid(username, "^[a-zA-Z0-9_-]{3,16}$"));
 
 
         if (userController.findUser(username) != null) {
@@ -65,24 +65,36 @@ public class Authentication {
         // password
         String password;
         String confirmPassword;
-        boolean condition;
+        boolean condition = true;
         do {
-            tw.typeWithColor("Create a password for your account (Your password cannot contains spaces)=>", Colors.PURPLE, true);
+            tw.typeWithColor("Create a password for your account (Your password cannot contains spaces)=>", Colors.WHITE, true);
             password = scanner.nextLine();
 
-            tw.typeWithColor("Confirm your password =>", Colors.PURPLE, true);
+            if (!isInputValid(password, "^(?=.*\\d)?(?=.*[a-zA-Z]).{6,}$")) {
+                tw.typeWithColor("Your password is weak and easy to guess. Please choose a stronger one.", Colors.RED, true);
+                tw.typeWithColor("  Your password must contain at least 6 characters or more.", Colors.YELLOW, true);
+                tw.typeWithColor("  And it must also include both uppercase and lowercase letters for added security.", Colors.YELLOW, true);
+                continue;
+            }
+
+            tw.typeWithColor("Confirm your password =>", Colors.WHITE, true);
             confirmPassword = scanner.nextLine();
 
             condition = !Objects.equals(password, confirmPassword) || password.contains(" ");
             if (condition) {
-                tw.typeWithColor("Your password didn't match or it contained spaces, try again ...", Colors.RED, true);
+                tw.typeWithColor("Your password didn't match, try again ...", Colors.RED, true);
             }
 
         } while (condition);
 
         // bio
-        tw.typeWithColor("Please write a biography about yourself. Keep it within 200 characters.\" =>", Colors.PURPLE, true);
-        String bio = scanner.nextLine();
+        String bio;
+        do {
+
+            tw.typeWithColor("Please write a biography about yourself. Keep it within 200 characters.\" =>", Colors.WHITE, true);
+            bio = scanner.nextLine();
+            System.out.println(bio.length());
+        } while (bio.length() > 200);
 
 
         userController.signup(name, lastName, username, password, bio);
@@ -90,15 +102,12 @@ public class Authentication {
 
     }
 
-    private boolean isValidUsername(String username) {
-        // Regex pattern for username
-        String regexPattern = "^[a-zA-Z0-9_-]{3,16}$";
-
+    private boolean isInputValid(String input, String regexPattern) {
         // Compile the regex pattern
         Pattern pattern = Pattern.compile(regexPattern);
 
-        // Match the username against the regex pattern
-        Matcher matcher = pattern.matcher(username);
+        // Match the input against the regex pattern
+        Matcher matcher = pattern.matcher(input);
 
         // Return true if the username matches the regex pattern
         return matcher.matches();
