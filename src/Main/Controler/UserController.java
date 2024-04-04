@@ -5,6 +5,7 @@ import Main.Services.Authentication;
 import Main.Services.Database;
 import Main.Services.PasswordHasher;
 import Main.Twitter;
+import net.bytebuddy.description.type.TypeList;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -12,7 +13,7 @@ import java.util.Objects;
 
 public class UserController {
     public User findUser(String username) {
-        List<User> users = Database.users;
+        List<User> users = getAllUsers();
         for (User user : users) {
             if (Objects.equals(user.getUsername(), username)) {
                 return user;
@@ -21,6 +22,13 @@ public class UserController {
         return null;
     }
 
+
+    // READ
+    public List<User> getAllUsers() {
+        return Database.users;
+    }
+
+    //CREATE
     public boolean signup(String name, String lastName, String username, String password, String bio) {
 
         try {
@@ -48,4 +56,27 @@ public class UserController {
 
         throw new SecurityException("Incorrect username or password.");
     }
+
+    //UPDATE
+    public void editUser(String username, User newUserData) throws IllegalAccessException {
+        User mainUser = findUser(username);
+        if (mainUser == null)
+            throw new NoSuchElementException("Username '" + username + "' not found.");
+
+        mainUser = newUserData;
+        Twitter.db.updateUsersDb(getAllUsers());
+
+    }
+
+
+    //DELETE
+    public void deleteUser(String username) throws IllegalAccessException {
+        User mainUser = findUser(username);
+        if (mainUser == null)
+            throw new NoSuchElementException("Username '" + username + "' not found.");
+
+        getAllUsers().remove(mainUser);
+        Twitter.db.updateUsersDb(getAllUsers());
+    }
+
 }

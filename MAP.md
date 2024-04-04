@@ -30,6 +30,6 @@
 
 ### Unauthorized User
 
-- [ ]  Login
+- [x]  Login
 - [x]  Sign Up
 - [x] Exit

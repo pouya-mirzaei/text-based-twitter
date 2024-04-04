@@ -9,8 +9,8 @@ public class User {
     private String id;
     private String name;
     private String lastName;
-    private final String username;
-    private final String password;
+    private String username;
+    private String password;
     private String role;
     private String bio;
     private final long createAt;
@@ -90,4 +90,11 @@ public class User {
         return createAt;
     }
 
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
 }

@@ -95,7 +95,6 @@ public class Authentication {
 
             tw.type("Please write a biography about yourself. Keep it within 200 characters.\" =>");
             bio = scanner.nextLine();
-            System.out.println(bio.length());
         } while (bio.length() > 200);
 
         if (userController.signup(name, lastName, username, password, bio)) {
@@ -125,7 +124,7 @@ public class Authentication {
 
         try {
             userController.login(username, password);
-            tw.typeWithColor("You have logged into your account successfully:)", Colors.CYAN, true);
+            tw.typeWithColor("You have logged in into your account successfully:)", Colors.CYAN, true);
             tw.type(" Press any key to continue...");
 
         } catch (Exception e) {

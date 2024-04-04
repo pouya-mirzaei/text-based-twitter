@@ -1,12 +1,15 @@
 package Main;
 
 import Main.Controler.UserController;
+import Main.Model.User;
 import Main.Services.Authentication;
 import Main.Services.Database;
 import Main.View.Colors;
 import Main.View.Menu;
 import Main.View.Typewriter;
 
+import java.util.Date;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 public class Twitter {
@@ -48,7 +51,28 @@ public class Twitter {
     }
 
     private static void userMenu() {
-        tw.typeWithColor("User menu", Colors.CYAN, true);
+
+        String[] mainMenu = {"Home", "Search", "Tweet a post", "Profile"};
+        String message = "Hi " + auth.currentUserData.getName();
+
+        int userInput = 0;
+        boolean condition;
+        do {
+            menu.displayMenu(mainMenu, message);
+            userInput = getIntegerInput();
+
+            condition = userInput < 1 || userInput > mainMenu.length;
+
+            if (condition) {
+                tw.typeWithColor("Wrong choice, try again ...", Colors.RED, false);
+                try {
+                    Thread.sleep(1500);
+                } catch (Exception e) {
+                    //
+                }
+            }
+        } while (condition);
+
     }
 
     private static void authMenu() {
