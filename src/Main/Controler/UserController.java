@@ -1,10 +1,13 @@
 package Main.Controler;
 
 import Main.Model.User;
+import Main.Services.Authentication;
 import Main.Services.Database;
+import Main.Services.PasswordHasher;
 import Main.Twitter;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 
 public class UserController {
@@ -26,10 +29,23 @@ public class UserController {
             Twitter.db.updateUsersDb(Database.users);
             return true;
 
-        } catch (Exception e) {
+        } catch (IllegalAccessException e) {
             return false;
         }
     }
 
 
+    public void login(String username, String password) {
+        User mainUser = findUser(username);
+        if (mainUser == null)
+            throw new NoSuchElementException("Username '" + username + "' not found.");
+
+        if (PasswordHasher.checkPassword(password, mainUser.getPassword())) {
+            Authentication.currentUserId = mainUser.getId();
+            Authentication.currentUserData = mainUser;
+            return;
+        }
+
+        throw new SecurityException("Incorrect username or password.");
+    }
 }

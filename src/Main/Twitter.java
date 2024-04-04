@@ -19,7 +19,7 @@ public class Twitter {
     public static Authentication auth;
 
 
-    public Twitter() {
+    public Twitter() throws IllegalAccessException {
         scanner = new Scanner(System.in);
         db = new Database();
         menu = new Menu();
@@ -29,11 +29,26 @@ public class Twitter {
 
     public static void run() {
 
-        if (!Authentication.isUserLoggedIn()) {
+        if (Authentication.isUserLoggedIn()) {
+            if (Authentication.isAdmin()) {
+                adminMenu();
+            } else {
+                userMenu();
+            }
+        } else {
             authMenu();
         }
 
 
+    }
+
+    private static void adminMenu() {
+        tw.typeWithColor("Admin menu", Colors.CYAN, true);
+
+    }
+
+    private static void userMenu() {
+        tw.typeWithColor("User menu", Colors.CYAN, true);
     }
 
     private static void authMenu() {
@@ -74,7 +89,7 @@ public class Twitter {
     }
 
     private static void handleLogIn() {
-        tw.typeWithColor("log in bitch ...", Colors.CYAN, false);
+        auth.loginMenu();
     }
 
     private static void handleSignUp() {

@@ -4,20 +4,18 @@ import Main.Model.User;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 public class Database {
 
     public static List<User> users;
 
-    public Database() {
+    public Database() throws IllegalAccessException {
         // initiate the database
         users = getUsersFromDb();
     }
 
-    public List<User> getUsersFromDb() {
+    public List<User> getUsersFromDb() throws IllegalAccessException {
 
         List<User> users = new ArrayList<>();
 
@@ -48,7 +46,7 @@ public class Database {
 
     }
 
-    public void updateUsersDb(List<User> users) {
+    public void updateUsersDb(List<User> users) throws IllegalAccessException {
         BufferedWriter writer;
 
         try {
@@ -69,7 +67,7 @@ public class Database {
             writer.close();
 
         } catch (IOException e) {
-            //
+            throw new IllegalAccessException();
         }
 
 

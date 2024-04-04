@@ -12,8 +12,6 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static Main.Twitter.auth;
-import static Main.Twitter.getIntegerInput;
 
 public class Authentication {
     public static String currentUserId = null;
@@ -27,24 +25,28 @@ public class Authentication {
         return currentUserId != null;
     }
 
+    public static boolean isAdmin() {
+        return Objects.equals(currentUserData.getRole(), "ADMIN");
+    }
+
     public void signupMenu() {
         Menu.clearScreen();
         scanner.nextLine();
-        tw.typeWithColor("Signup Menu Menu", Colors.CYAN, true);
+        tw.typeWithColor("Signup Menu :)", Colors.CYAN, true);
 
         // name
-        tw.typeWithColor("Tell us your name =>", Colors.WHITE, true);
+        tw.type("Tell us your name =>");
         String name = scanner.nextLine();
 
         // last name
-        tw.typeWithColor("Hey  " + name + "! what is your last name ? =>", Colors.WHITE, true);
+        tw.type("Hey  " + name + "! what is your last name ? =>");
         String lastName = scanner.nextLine();
 
         // username
         String username;
         do {
             // Prompt the user for a username
-            tw.typeWithColor("Create a username for yourself => ", Colors.WHITE, true);
+            tw.type("Create a username for yourself => ");
             username = scanner.nextLine();
 
             // Validate the username format using regex
@@ -67,7 +69,7 @@ public class Authentication {
         String confirmPassword;
         boolean condition = true;
         do {
-            tw.typeWithColor("Create a password for your account (Your password cannot contains spaces)=>", Colors.WHITE, true);
+            tw.type("Create a password for your account (Your password cannot contains spaces)=>");
             password = scanner.nextLine();
 
             if (!isInputValid(password, "^(?=.*\\d)?(?=.*[a-zA-Z]).{6,}$")) {
@@ -77,7 +79,7 @@ public class Authentication {
                 continue;
             }
 
-            tw.typeWithColor("Confirm your password =>", Colors.WHITE, true);
+            tw.type("Confirm your password =>");
             confirmPassword = scanner.nextLine();
 
             condition = !Objects.equals(password, confirmPassword) || password.contains(" ");
@@ -91,16 +93,51 @@ public class Authentication {
         String bio;
         do {
 
-            tw.typeWithColor("Please write a biography about yourself. Keep it within 200 characters.\" =>", Colors.WHITE, true);
+            tw.type("Please write a biography about yourself. Keep it within 200 characters.\" =>");
             bio = scanner.nextLine();
             System.out.println(bio.length());
         } while (bio.length() > 200);
 
+        if (userController.signup(name, lastName, username, password, bio)) {
+            tw.typeWithColor("You have been registered into the system!", Colors.CYAN, true);
+            tw.type(" Press any key to continue...");
+        } else {
+            tw.typeWithColor("There was an error in registration:(", Colors.CYAN, true);
+            tw.type(" Press any key to try again...");
+        }
+        scanner.nextLine();
+        Twitter.run();
+    }
 
-        userController.signup(name, lastName, username, password, bio);
+    public void loginMenu() {
+        Menu.clearScreen();
+        scanner.nextLine();
+        tw.typeWithColor("Login Menu :)", Colors.CYAN, true);
 
+        //username
+        tw.type("Enter your username");
+        String username = scanner.nextLine();
+
+        //password
+        tw.type("Enter your password");
+        String password = scanner.nextLine();
+
+
+        try {
+            userController.login(username, password);
+            tw.typeWithColor("You have logged into your account successfully:)", Colors.CYAN, true);
+            tw.type(" Press any key to continue...");
+
+        } catch (Exception e) {
+            tw.typeWithColor("Error : " + e.getMessage(), Colors.RED, true);
+            tw.type(" Press any key to try again...");
+        } finally {
+            scanner.nextLine();
+            Twitter.run();
+        }
 
     }
+
 
     private boolean isInputValid(String input, String regexPattern) {
         // Compile the regex pattern
