@@ -44,10 +44,22 @@ public class Authentication {
 
         // username
         String username;
+        boolean flag;
         do {
             // Prompt the user for a username
             tw.type("Create a username for yourself => ");
             username = scanner.nextLine();
+
+            flag = userController.findUser(username) != null;
+
+            if (flag) {
+                do {
+                    tw.typeWithColor("The username \"" + username + "\" is already in use. Please try a different username.", Colors.RED, true);
+                    username = scanner.nextLine();
+                    flag = userController.findUser(username) != null;
+
+                } while (flag);
+            }
 
             // Validate the username format using regex
             if (!isInputValid(username, "^[a-zA-Z0-9_-]{3,16}$")) {
@@ -55,14 +67,6 @@ public class Authentication {
             }
         } while (!isInputValid(username, "^[a-zA-Z0-9_-]{3,16}$"));
 
-
-        if (userController.findUser(username) != null) {
-            do {
-                tw.typeWithColor("The username \"" + username + "\" is already in use. Please try a different username.", Colors.RED, true);
-                username = scanner.next();
-
-            } while (userController.findUser(username) != null);
-        }
 
         // password
         String password;
@@ -72,10 +76,10 @@ public class Authentication {
             tw.type("Create a password for your account (Your password cannot contains spaces)=>");
             password = scanner.nextLine();
 
-            if (!isInputValid(password, "^(?=.*\\d)?(?=.*[a-zA-Z]).{6,}$")) {
+            if (!isInputValid(password, "^(?=.*\\d)(?=.*[a-zA-Z]).{6,}$")) {
                 tw.typeWithColor("Your password is weak and easy to guess. Please choose a stronger one.", Colors.RED, true);
                 tw.typeWithColor("  Your password must contain at least 6 characters or more.", Colors.YELLOW, true);
-                tw.typeWithColor("  And it must also include both uppercase and lowercase letters for added security.", Colors.YELLOW, true);
+                tw.typeWithColor("  And it must also include both uppercase and lowercase letters and at least one number for added security.", Colors.YELLOW, true);
                 continue;
             }
 
