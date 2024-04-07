@@ -142,7 +142,7 @@ public class Authentication {
     }
 
 
-    private boolean isInputValid(String input, String regexPattern) {
+    public static boolean isInputValid(String input, String regexPattern) {
         // Compile the regex pattern
         Pattern pattern = Pattern.compile(regexPattern);
 

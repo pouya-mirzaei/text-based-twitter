@@ -52,7 +52,7 @@ public class Twitter {
 
     private static void userMenu() {
 
-        String[] mainMenu = {"Home", "Search", "Tweet a post", "Profile"};
+        String[] mainMenu = {"Home", "Search", "Tweet a post", "Profile Settings", "Log out"};
         String message = "Hi " + auth.currentUserData.getName();
 
         int userInput = 0;
@@ -73,7 +73,27 @@ public class Twitter {
             }
         } while (condition);
 
-        
+        switch (userInput) {
+            case 1:
+                // home page
+                break;
+            case 2:
+                // search
+                break;
+            case 3:
+                // tweet
+                break;
+            case 4:
+                // profile
+                Authentication.currentUserData.profileSettings();
+                break;
+            case 5:
+                userController.logout();
+                Twitter.run();
+                break;
+
+        }
+
     }
 
     private static void authMenu() {

@@ -57,6 +57,11 @@ public class UserController {
         throw new SecurityException("Incorrect username or password.");
     }
 
+    public void logout() {
+        Authentication.currentUserId = null;
+        Authentication.currentUserData = null;
+    }
+
     //UPDATE
     public void editUser(String username, User newUserData) throws IllegalAccessException {
         User mainUser = findUser(username);

@@ -21,10 +21,10 @@
     1. Show profile info
     2. #### Edit profile
 
-    - [ ] Change username
-    - [ ] Change password
-    - [ ] Change displaying name
-    - [ ] Change Bio
+    - [x] Change username
+    - [x] Change password
+    - [x] Change displaying name
+    - [x] Change Bio
 
 ---
 
