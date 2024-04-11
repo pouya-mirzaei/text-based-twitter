@@ -16,6 +16,7 @@ bin/
 !**/src/test/**/bin/
 **/*.class
 **/*.txt
+twitter.db
 ### NetBeans ###
 /nbproject/private/
 /nbbuild/

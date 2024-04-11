@@ -1,15 +1,12 @@
 package Main;
 
 import Main.Controler.UserController;
-import Main.Model.User;
 import Main.Services.Authentication;
 import Main.Services.Database;
 import Main.View.Colors;
 import Main.View.Menu;
 import Main.View.Typewriter;
 
-import java.util.Date;
-import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 public class Twitter {
@@ -24,10 +21,10 @@ public class Twitter {
 
     public Twitter() throws IllegalAccessException {
         scanner = new Scanner(System.in);
-        db = new Database();
-        menu = new Menu();
         userController = new UserController();
+        menu = new Menu();
         auth = new Authentication();
+        db = new Database();
     }
 
     public static void run() {

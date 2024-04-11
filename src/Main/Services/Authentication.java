@@ -50,13 +50,13 @@ public class Authentication {
             tw.type("Create a username for yourself => ");
             username = scanner.nextLine();
 
-            flag = userController.findUser(username) != null;
+            flag = userController.getUser(username) != null;
 
             if (flag) {
                 do {
                     tw.typeWithColor("The username \"" + username + "\" is already in use. Please try a different username.", Colors.RED, true);
                     username = scanner.nextLine();
-                    flag = userController.findUser(username) != null;
+                    flag = userController.getUser(username) != null;
 
                 } while (flag);
             }

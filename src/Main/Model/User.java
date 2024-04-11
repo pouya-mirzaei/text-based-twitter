@@ -1,12 +1,10 @@
 package Main.Model;
 
 import Main.Services.Authentication;
-import Main.Services.Database;
 import Main.Services.PasswordHasher;
 import Main.Twitter;
 import Main.View.Colors;
 
-import javax.xml.crypto.Data;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Objects;
@@ -76,9 +74,9 @@ public class User {
         this.lastName = lastName;
 
         try {
-            Twitter.db.updateUsersDb(Database.users);
+            Twitter.userController.editUser(username, this);
         } catch (Exception e) {
-            throw new Exception("There was an error while changing your name :(");
+            throw new Exception(e.getMessage());
         }
     }
 
@@ -108,9 +106,10 @@ public class User {
         this.bio = bio;
 
         try {
-            Twitter.db.updateUsersDb(Database.users);
+            Twitter.userController.editUser(username, this);
+
         } catch (Exception e) {
-            throw new Exception("There was an error while changing your bio :(");
+            throw new Exception(e.getMessage());
         }
     }
 
@@ -118,46 +117,13 @@ public class User {
         return createAt;
     }
 
-    public void changeUsername() throws Exception {
-        String username;
-        boolean flag;
-        do {
-            // Prompt the user for a username
-            Twitter.tw.type("Create a username for yourself => ");
-            username = Twitter.scanner.nextLine();
-
-            flag = Twitter.userController.findUser(username) != null;
-
-            if (flag) {
-                do {
-                    Twitter.tw.typeWithColor("The username \"" + username + "\" is already in use. Please try a different username.", Colors.RED, true);
-                    username = Twitter.scanner.nextLine();
-                    flag = Twitter.userController.findUser(username) != null;
-
-                } while (flag);
-            }
-
-            // Validate the username format using regex
-            if (!Authentication.isInputValid(username, "^[a-zA-Z0-9_-]{3,16}$")) {
-                Twitter.tw.typeWithColor("Invalid username format.\nUsername must contain only alphanumeric characters, underscores, or hyphens, and be between 3 and 16 characters long.", Colors.RED, true);
-            }
-        } while (!Authentication.isInputValid(username, "^[a-zA-Z0-9_-]{3,16}$"));
-
-        this.username = username;
-
-        try {
-            Twitter.db.updateUsersDb(Database.users);
-        } catch (Exception e) {
-            throw new Exception("There was an error while changing your username :(");
-        }
-    }
 
     public void changePassword() throws Exception {
         String password;
         String confirmPassword;
         boolean condition = true;
         do {
-            Twitter.tw.type("Create a password for your account (Your password cannot contains spaces)=>");
+            Twitter.tw.type("Create a new password for your account (Your password cannot contains spaces)=>");
             password = Twitter.scanner.nextLine();
 
             if (!Authentication.isInputValid(password, "^(?=.*\\d)(?=.*[a-zA-Z]).{6,}$")) {
@@ -180,9 +146,9 @@ public class User {
         this.password = PasswordHasher.hashPassword(password);
 
         try {
-            Twitter.db.updateUsersDb(Database.users);
+            Twitter.userController.editUser(username, this);
         } catch (Exception e) {
-            throw new Exception("There was an error while changing your password :(");
+            throw new Exception(e.getMessage());
         }
 
     }
@@ -240,7 +206,7 @@ public class User {
     }
 
     private void editProfile() {
-        String[] menuItems = {"Change your name", "Change username", "Change password", "Change bio", "Back"};
+        String[] menuItems = {"Change your name", "Change password", "Change bio", "Back"};
 
         int userInput = 0;
 
@@ -270,14 +236,11 @@ public class User {
                     changeName();
                     break;
                 case 2:
-                    changeUsername();
-                    break;
-                case 3:
                     changePassword();
                     break;
-                case 4:
+                case 3:
                     changeBio();
-                case 5:
+                case 4:
                     Twitter.run();
                     return;
             }

@@ -2,49 +2,56 @@ package Main.Controler;
 
 import Main.Model.User;
 import Main.Services.Authentication;
-import Main.Services.Database;
 import Main.Services.PasswordHasher;
 import Main.Twitter;
-//import net.bytebuddy.description.type.TypeList;
 
-import java.util.List;
+import java.sql.*;
 import java.util.NoSuchElementException;
-import java.util.Objects;
 
 public class UserController {
-    public User findUser(String username) {
-        List<User> users = getAllUsers();
-        for (User user : users) {
-            if (Objects.equals(user.getUsername(), username)) {
-                return user;
-            }
-        }
-        return null;
-    }
+    private String DATABASE_URL = "jdbc:sqlite:twitter.db";
 
 
     // READ
-    public List<User> getAllUsers() {
-        return Database.users;
+    public User getUser(String username) {
+        try (Connection connection = DriverManager.getConnection(DATABASE_URL);
+             PreparedStatement stmt = connection.prepareStatement("SELECT * FROM users WHERE username = ?")) {
+            stmt.setString(1, username); // Set username parameter securely
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return new User(
+                        rs.getString("id"),  // Assuming id is an integer
+                        rs.getString("name"),
+                        rs.getString("lastname"),
+                        rs.getString("username"),
+                        rs.getString("password"),  // Consider not returning password
+                        rs.getString("role"),
+                        rs.getString("bio"),
+                        rs.getDate("created_at").getTime()
+                );
+            }
+            return null;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
+
 
     //CREATE
     public boolean signup(String name, String lastName, String username, String password, String bio) {
 
         try {
-            User newUser = new User(name, lastName, username, password, bio);
-            Database.users.add(newUser);
-            Twitter.db.updateUsersDb(Database.users);
+            createUser(name, lastName, username, password, bio);
             return true;
 
-        } catch (IllegalAccessException e) {
+        } catch (SQLException e) {
             return false;
         }
     }
 
 
     public void login(String username, String password) {
-        User mainUser = findUser(username);
+        User mainUser = getUser(username);
         if (mainUser == null)
             throw new NoSuchElementException("Username '" + username + "' not found.");
 
@@ -62,26 +69,55 @@ public class UserController {
         Authentication.currentUserData = null;
     }
 
+
+    public void createUser(String name, String lastname, String username, String password, String bio) throws SQLException {
+        try (Connection connection = DriverManager.getConnection(DATABASE_URL);
+             PreparedStatement stmt = connection.prepareStatement("INSERT INTO users (name, lastname, username, password, bio) VALUES (?, ?, ?, ?, ?)")) {
+            stmt.setString(1, name);
+            stmt.setString(2, lastname);
+            stmt.setString(3, username);
+            stmt.setString(4, PasswordHasher.hashPassword(password));
+            stmt.setString(5, bio);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new SQLException(e);
+        }
+    }
+
+    public void createAdmin(String name, String lastname, String username, String password, String bio) throws SQLException {
+        try (Connection connection = DriverManager.getConnection(DATABASE_URL);
+             PreparedStatement stmt = connection.prepareStatement("INSERT INTO users (name, lastname, username, password, bio, role) VALUES (?, ?, ?, ?, ?, ?)")) {
+            stmt.setString(1, name);
+            stmt.setString(2, lastname);
+            stmt.setString(3, username);
+            stmt.setString(4, PasswordHasher.hashPassword(password));
+            stmt.setString(5, bio);
+            stmt.setString(6, "ADMIN");
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new SQLException(e);
+        }
+    }
+
     //UPDATE
-    public void editUser(String username, User newUserData) throws IllegalAccessException {
-        User mainUser = findUser(username);
-        if (mainUser == null)
-            throw new NoSuchElementException("Username '" + username + "' not found.");
+    public void editUser(String username, User newUserData) throws SQLException {
+        try (Connection connection = DriverManager.getConnection(DATABASE_URL);
+             PreparedStatement stmt = connection.prepareStatement("UPDATE users SET bio = ?, name = ?, lastname = ?, password = ? WHERE username = ?")) {
+            stmt.setString(1, newUserData.getBio());
+            stmt.setString(2, newUserData.getName());
+            stmt.setString(3, newUserData.getLastName());
+            stmt.setString(4, newUserData.getPassword());
+            stmt.setString(5, username);
+            stmt.executeUpdate();
 
-        mainUser = newUserData;
-        Twitter.db.updateUsersDb(getAllUsers());
-
+        } catch (SQLException e) {
+            throw e;
+        }
     }
 
 
     //DELETE
     public void deleteUser(String username) throws IllegalAccessException {
-        User mainUser = findUser(username);
-        if (mainUser == null)
-            throw new NoSuchElementException("Username '" + username + "' not found.");
-
-        getAllUsers().remove(mainUser);
-        Twitter.db.updateUsersDb(getAllUsers());
     }
 
 }
