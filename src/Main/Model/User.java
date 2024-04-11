@@ -290,4 +290,18 @@ public class User {
             Twitter.tw.typeWithColor(e.getMessage(), Colors.RED, true);
         }
     }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id='" + id + '\'' +
+                ", name='" + name + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", role='" + role + '\'' +
+                ", bio='" + bio + '\'' +
+                ", createAt=" + createAt +
+                '}';
+    }
 }

@@ -1,0 +1,15 @@
+<component name="libraryTable">
+  <library name="ch.qos.logback.db.classic" type="repository">
+    <properties maven-id="ch.qos.logback.db:logback-classic-db:1.2.11.1" />
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/ch/qos/logback/db/logback-classic-db/1.2.11.1/logback-classic-db-1.2.11.1.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/ch/qos/logback/logback-core/1.2.11/logback-core-1.2.11-tests.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/ch/qos/logback/logback-core/1.2.11/logback-core-1.2.11.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/ch/qos/logback/db/logback-core-db/1.2.11.1/logback-core-db-1.2.11.1.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/ch/qos/logback/logback-classic/1.2.11/logback-classic-1.2.11.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/slf4j/slf4j-api/1.7.32/slf4j-api-1.7.32.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
