@@ -120,11 +120,21 @@ public class User {
 
 
     public void changePassword() throws Exception {
-        String password;
+        String oldPassword;
+        String password = "";
         String confirmPassword;
         boolean condition = true;
+
         do {
-            Twitter.tw.type("Create a new password for your account (Your password cannot contains spaces)=>");
+            Twitter.tw.type("Enter your old password");
+            oldPassword = Twitter.scanner.nextLine();
+
+            if (!PasswordHasher.checkPassword(oldPassword, this.getPassword())) {
+                Twitter.tw.typeWithColor("Your old password is not correct", Colors.RED, true);
+                continue;
+            }
+
+            Twitter.tw.type("Enter your new password=>");
             password = Twitter.scanner.nextLine();
 
             if (!Authentication.isInputValid(password, "^(?=.*\\d)(?=.*[a-zA-Z]).{6,}$")) {
@@ -134,7 +144,7 @@ public class User {
                 continue;
             }
 
-            Twitter.tw.type("Confirm your password =>");
+            Twitter.tw.type("Confirm your new password =>");
             confirmPassword = Twitter.scanner.nextLine();
 
             condition = !Objects.equals(password, confirmPassword) || password.contains(" ");
@@ -232,7 +242,13 @@ public class User {
                     break;
                 case 2:
                     changePassword();
-                    break;
+                    Twitter.tw.typeWithColor("You edited your profile successfully :)", Colors.GREEN, true);
+                    Twitter.tw.typeWithColor("You need to login into your account again...", Colors.CYAN, true);
+                    Twitter.tw.typeWithColor("Press any key to continue", Colors.CYAN, true);
+                    Twitter.scanner.nextLine();
+                    Twitter.userController.logout();
+                    Twitter.run();
+                    return;
                 case 3:
                     changeBio();
                 case 4:
