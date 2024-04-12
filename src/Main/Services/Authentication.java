@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
 
 
 public class Authentication {
-    public static String currentUserId = null;
+    public static int currentUserId = 0;
     public static User currentUserData = null;
     private static Typewriter tw = Twitter.tw;
     private static Scanner scanner = Twitter.scanner;
@@ -22,7 +22,7 @@ public class Authentication {
 
 
     public static boolean isUserLoggedIn() {
-        return currentUserId != null;
+        return currentUserId != 0;
     }
 
     public static boolean isAdmin() {

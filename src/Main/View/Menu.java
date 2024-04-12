@@ -21,7 +21,6 @@ public class Menu {
     }
 
     public static void clearScreen() {
-        System.out.println();
     }
 
 }

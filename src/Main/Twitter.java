@@ -1,5 +1,6 @@
 package Main;
 
+import Main.Controler.TweetController;
 import Main.Controler.UserController;
 import Main.Services.Authentication;
 import Main.Services.Database;
@@ -16,12 +17,14 @@ public class Twitter {
     public static Typewriter tw = Menu.tw;
     public static Menu menu;
     public static UserController userController;
+    public static TweetController tweetController;
     public static Authentication auth;
 
 
     public Twitter() throws IllegalAccessException {
         scanner = new Scanner(System.in);
         userController = new UserController();
+        tweetController = new TweetController();
         menu = new Menu();
         auth = new Authentication();
         db = new Database();
@@ -49,7 +52,7 @@ public class Twitter {
 
     private static void userMenu() {
 
-        String[] mainMenu = {"Home", "Search", "Tweet a post", "Profile Settings", "Log out"};
+        String[] mainMenu = {"Home", "My tweets", "Search", "Tweet a post", "Profile Settings", "Log out"};
         String message = "Hi " + auth.currentUserData.getName();
 
         int userInput = 0;
@@ -75,16 +78,19 @@ public class Twitter {
                 // home page
                 break;
             case 2:
-                // search
+                // my tweets
                 break;
             case 3:
-                // tweet
+                // search
                 break;
             case 4:
+                Authentication.currentUserData.tweet();
+                break;
+            case 5:
                 // profile
                 Authentication.currentUserData.profileSettings();
                 break;
-            case 5:
+            case 6:
                 userController.logout();
                 Twitter.run();
                 break;

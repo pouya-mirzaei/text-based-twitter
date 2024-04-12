@@ -2,6 +2,7 @@ package Main.Controler;
 
 import Main.Model.User;
 import Main.Services.Authentication;
+import Main.Services.Database;
 import Main.Services.PasswordHasher;
 import Main.Twitter;
 
@@ -9,18 +10,17 @@ import java.sql.*;
 import java.util.NoSuchElementException;
 
 public class UserController {
-    private String DATABASE_URL = "jdbc:sqlite:twitter.db";
 
 
     // READ
     public User getUser(String username) {
-        try (Connection connection = DriverManager.getConnection(DATABASE_URL);
+        try (Connection connection = DriverManager.getConnection(Database.DATABASE_URL);
              PreparedStatement stmt = connection.prepareStatement("SELECT * FROM users WHERE username = ?")) {
             stmt.setString(1, username); // Set username parameter securely
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 return new User(
-                        rs.getString("id"),  // Assuming id is an integer
+                        rs.getInt("id"),  // Assuming id is an integer
                         rs.getString("name"),
                         rs.getString("lastname"),
                         rs.getString("username"),
@@ -65,13 +65,13 @@ public class UserController {
     }
 
     public void logout() {
-        Authentication.currentUserId = null;
+        Authentication.currentUserId = 0;
         Authentication.currentUserData = null;
     }
 
 
     public void createUser(String name, String lastname, String username, String password, String bio) throws SQLException {
-        try (Connection connection = DriverManager.getConnection(DATABASE_URL);
+        try (Connection connection = DriverManager.getConnection(Database.DATABASE_URL);
              PreparedStatement stmt = connection.prepareStatement("INSERT INTO users (name, lastname, username, password, bio) VALUES (?, ?, ?, ?, ?)")) {
             stmt.setString(1, name);
             stmt.setString(2, lastname);
@@ -85,7 +85,7 @@ public class UserController {
     }
 
     public void createAdmin(String name, String lastname, String username, String password, String bio) throws SQLException {
-        try (Connection connection = DriverManager.getConnection(DATABASE_URL);
+        try (Connection connection = DriverManager.getConnection(Database.DATABASE_URL);
              PreparedStatement stmt = connection.prepareStatement("INSERT INTO users (name, lastname, username, password, bio, role) VALUES (?, ?, ?, ?, ?, ?)")) {
             stmt.setString(1, name);
             stmt.setString(2, lastname);
@@ -101,7 +101,7 @@ public class UserController {
 
     //UPDATE
     public void editUser(String username, User newUserData) throws SQLException {
-        try (Connection connection = DriverManager.getConnection(DATABASE_URL);
+        try (Connection connection = DriverManager.getConnection(Database.DATABASE_URL);
              PreparedStatement stmt = connection.prepareStatement("UPDATE users SET bio = ?, name = ?, lastname = ?, password = ? WHERE username = ?")) {
             stmt.setString(1, newUserData.getBio());
             stmt.setString(2, newUserData.getName());

@@ -5,13 +5,14 @@ import Main.Services.PasswordHasher;
 import Main.Twitter;
 import Main.View.Colors;
 
+import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Objects;
-import java.util.UUID;
 
 public class User {
-    private String id;
+    private int id;
     private String name;
     private String lastName;
     private String username;
@@ -21,7 +22,7 @@ public class User {
     private final long createAt;
 
     public User(String name, String lastName, String username, String password, String bio) {
-        this.id = String.valueOf(UUID.randomUUID());
+        this.id = 0; // this will be changed in the db
         this.name = name;
         this.lastName = lastName;
         this.username = username;
@@ -31,7 +32,7 @@ public class User {
         this.createAt = new Date().getTime();
     }
 
-    public User(String id, String name, String lastName, String username, String password, String role, String bio, long createAt) {
+    public User(int id, String name, String lastName, String username, String password, String role, String bio, long createAt) {
         this.id = id;
         this.name = name;
         this.lastName = lastName;
@@ -51,11 +52,11 @@ public class User {
         this.role = role;
     }
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -154,19 +155,13 @@ public class User {
     }
 
     private void showUserInformation() {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE");
-        String day = dateFormat.format(new Date(createAt));
 
-        dateFormat = new SimpleDateFormat("MMMM");
-        String month = dateFormat.format(new Date(createAt));
-
-        dateFormat = new SimpleDateFormat("YYYY");
-        String year = dateFormat.format(new Date(createAt));
+        Timestamp time = new Timestamp(new Date(this.createAt).getTime());
 
         Twitter.tw.typeWithColor("Name : " + name + " " + lastName, Colors.BLUE, true);
         Twitter.tw.typeWithColor("Username : @" + username, Colors.BLUE, true);
         Twitter.tw.typeWithColor("Bio : " + bio, Colors.BLUE, true);
-        Twitter.tw.typeWithColor("Joined : " + new Date(createAt), Colors.BLUE, true);
+        Twitter.tw.typeWithColor("Joined : " + time, Colors.BLUE, true);
 
     }
 
@@ -266,5 +261,16 @@ public class User {
                 ", bio='" + bio + '\'' +
                 ", createAt=" + createAt +
                 '}';
+    }
+
+    public void tweet() {
+        try {
+            Twitter.tweetController.tweet(this.getId());
+        } catch (SQLException e) {
+            Twitter.tw.typeWithColor("Error : " + e.getMessage(), Colors.RED, true);
+            Twitter.tw.typeWithColor("Press any key to go back to the main menu " + e.getMessage(), Colors.RED, true);
+            Twitter.scanner.nextLine();
+            Twitter.run();
+        }
     }
 }

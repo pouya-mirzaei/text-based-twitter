@@ -33,6 +33,34 @@ public class Database {
                     ")";
             stmn.execute(sql);
 
+            stmn.executeUpdate("CREATE TABLE IF NOT EXISTS tweets (" +
+                    "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                    "user_id INTEGER NOT NULL," +
+                    "tweet_content TEXT NOT NULL," +
+                    "timestamp DATETIME DEFAULT CURRENT_TIMESTAMP," +
+                    "FOREIGN KEY (user_id) REFERENCES users(id)" +
+                    ")");
+
+            stmn.executeUpdate("CREATE TABLE IF NOT EXISTS likes (" +
+                    "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                    "tweet_id INTEGER NOT NULL," +
+                    "user_id INTEGER NOT NULL," +
+                    "FOREIGN KEY (tweet_id) REFERENCES tweets(id)," +
+                    "FOREIGN KEY (user_id) REFERENCES users(id)" +
+                    ")");
+
+            stmn.executeUpdate("CREATE TABLE IF NOT EXISTS comments (" +
+                    "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                    "tweet_id INTEGER NOT NULL," +
+                    "user_id INTEGER NOT NULL," +
+                    "parent_comment_id INTEGER," +
+                    "comment_content TEXT NOT NULL," +
+                    "timestamp DATETIME DEFAULT CURRENT_TIMESTAMP," +
+                    "FOREIGN KEY (tweet_id) REFERENCES tweets(id)," +
+                    "FOREIGN KEY (user_id) REFERENCES users(id)," +
+                    "FOREIGN KEY (parent_comment_id) REFERENCES comments(id)" +
+                    ")");
+
 
             connection.close();
         } catch (Exception e) {
