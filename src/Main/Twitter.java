@@ -2,6 +2,7 @@ package Main;
 
 import Main.Controller.TweetController;
 import Main.Controller.UserController;
+import Main.Model.Tweet;
 import Main.Services.Authentication;
 import Main.Services.Database;
 import Main.View.Colors;
@@ -80,7 +81,7 @@ public class Twitter {
                 break;
             case 2:
                 try {
-                    tweetController.previewTweets(tweetController.getCurrentUserTweets());
+                    Tweet.previewTweets(tweetController.getCurrentUserTweets());
                 } catch (SQLException e) {
                     tw.typeWithColor("There was an error while fetching the data from the database", Colors.RED, true);
                     tw.type(" Press any key to continue ...");
