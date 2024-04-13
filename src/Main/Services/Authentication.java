@@ -1,6 +1,6 @@
 package Main.Services;
 
-import Main.Controler.UserController;
+import Main.Controller.UserController;
 import Main.Model.User;
 import Main.Twitter;
 import Main.View.Colors;

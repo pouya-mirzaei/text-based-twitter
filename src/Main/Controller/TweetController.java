@@ -1,4 +1,4 @@
-package Main.Controler;
+package Main.Controller;
 
 import Main.Model.Tweet;
 import Main.Services.Authentication;
@@ -91,10 +91,9 @@ public class TweetController {
         }
     }
 
-    public void showMyTweets() {
+    public void previewTweets(List<Tweet> tweets) {
 
-        List<Tweet> tweets;
-        String test = sc.nextLine();
+        sc.nextLine();
         try {
             tweets = getCurrentUserTweets();
             for (int i = 0; i < tweets.size(); i++) {
@@ -104,6 +103,7 @@ public class TweetController {
                 tweetPreview(tweets.get(i));
                 tw.typeWithColor("------------------------------------------------------------------------------------------", Colors.GREEN, true);
 
+                sc.nextLine();
                 if (i % 3 == 2 && i != tweets.size() - 1) {
                     tw.typeWithColor("Type 'more' to see more tweets", Colors.YELLOW, true);
                     tw.typeWithColor("Or Enter the number of the tweet that you want to see", Colors.YELLOW, true);

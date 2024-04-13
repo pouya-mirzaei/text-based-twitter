@@ -1,8 +1,7 @@
 package Main;
 
-import Main.Controler.TweetController;
-import Main.Controler.UserController;
-import Main.Model.Tweet;
+import Main.Controller.TweetController;
+import Main.Controller.UserController;
 import Main.Services.Authentication;
 import Main.Services.Database;
 import Main.View.Colors;
@@ -80,7 +79,15 @@ public class Twitter {
                 // home page
                 break;
             case 2:
-                Twitter.tweetController.showMyTweets();
+                try {
+                    tweetController.previewTweets(tweetController.getCurrentUserTweets());
+                } catch (SQLException e) {
+                    tw.typeWithColor("There was an error while fetching the data from the database", Colors.RED, true);
+                    tw.type(" Press any key to continue ...");
+                    scanner.nextLine();
+                    Twitter.run();
+                    return;
+                }
                 break;
             case 3:
                 // search

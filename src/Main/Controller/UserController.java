@@ -1,4 +1,4 @@
-package Main.Controler;
+package Main.Controller;
 
 import Main.Model.User;
 import Main.Services.Authentication;

@@ -1,6 +1,6 @@
 package Main.View;
 
-import Main.Controler.TweetController;
+import Main.Controller.TweetController;
 import Main.Model.Tweet;
 import Main.Twitter;
 
