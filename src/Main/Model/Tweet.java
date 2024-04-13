@@ -12,6 +12,7 @@ public class Tweet {
     private String content;
     private long createdAt;
     private int userId;
+    private String username;
     private List<User> liked;
     private List<User> retweets;
 
@@ -34,6 +35,14 @@ public class Tweet {
         this.userId = userId;
         this.liked = new ArrayList<>();
         this.retweets = new ArrayList<>();
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public int getId() {

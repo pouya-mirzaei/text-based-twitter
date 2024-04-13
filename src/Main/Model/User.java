@@ -8,7 +8,9 @@ import Main.View.Colors;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
 public class User {
@@ -102,7 +104,7 @@ public class User {
         do {
             Twitter.tw.type("Please write a biography about yourself. Keep it within 200 characters.\" =>");
             bio = Twitter.scanner.nextLine();
-        } while (bio.length() > 200);
+        } while (bio.length() > 200 || bio.isEmpty());
 
         this.bio = bio;
 
@@ -278,6 +280,10 @@ public class User {
                 ", createAt=" + createAt +
                 '}';
     }
+
+
+    // ---------------------------------------------------- tweets
+
 
     public void tweet() {
         try {

@@ -99,7 +99,7 @@ public class Authentication {
 
             tw.type("Please write a biography about yourself. Keep it within 200 characters.\" =>");
             bio = scanner.nextLine();
-        } while (bio.length() > 200);
+        } while (bio.length() > 200 || bio.isEmpty());
 
         if (userController.signup(name, lastName, username, password, bio)) {
             tw.typeWithColor("You have been registered into the system!", Colors.CYAN, true);

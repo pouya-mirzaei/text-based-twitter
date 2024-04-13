@@ -16,15 +16,38 @@ public class UserController {
     public User getUser(String username) {
         try (Connection connection = DriverManager.getConnection(Database.DATABASE_URL);
              PreparedStatement stmt = connection.prepareStatement("SELECT * FROM users WHERE username = ?")) {
-            stmt.setString(1, username); // Set username parameter securely
+            stmt.setString(1, username);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 return new User(
-                        rs.getInt("id"),  // Assuming id is an integer
+                        rs.getInt("id"),
                         rs.getString("name"),
                         rs.getString("lastname"),
                         rs.getString("username"),
-                        rs.getString("password"),  // Consider not returning password
+                        rs.getString("password"),
+                        rs.getString("role"),
+                        rs.getString("bio"),
+                        rs.getDate("created_at").getTime()
+                );
+            }
+            return null;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public User getUserById(int id) {
+        try (Connection connection = DriverManager.getConnection(Database.DATABASE_URL);
+             PreparedStatement stmt = connection.prepareStatement("SELECT * FROM users WHERE id = ?")) {
+            stmt.setInt(1, id); // Set username parameter securely
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return new User(
+                        rs.getInt("id"),
+                        rs.getString("name"),
+                        rs.getString("lastname"),
+                        rs.getString("username"),
+                        rs.getString("password"),
                         rs.getString("role"),
                         rs.getString("bio"),
                         rs.getDate("created_at").getTime()
@@ -58,6 +81,11 @@ public class UserController {
         if (PasswordHasher.checkPassword(password, mainUser.getPassword())) {
             Authentication.currentUserId = mainUser.getId();
             Authentication.currentUserData = mainUser;
+            try {
+                Twitter.tweetController.getCurrentUserTweets();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
             return;
         }
 

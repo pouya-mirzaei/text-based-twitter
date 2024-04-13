@@ -2,12 +2,14 @@ package Main;
 
 import Main.Controler.TweetController;
 import Main.Controler.UserController;
+import Main.Model.Tweet;
 import Main.Services.Authentication;
 import Main.Services.Database;
 import Main.View.Colors;
 import Main.View.Menu;
 import Main.View.Typewriter;
 
+import java.sql.SQLException;
 import java.util.Scanner;
 
 public class Twitter {
@@ -78,7 +80,7 @@ public class Twitter {
                 // home page
                 break;
             case 2:
-                // my tweets
+                Twitter.tweetController.showMyTweets();
                 break;
             case 3:
                 // search
