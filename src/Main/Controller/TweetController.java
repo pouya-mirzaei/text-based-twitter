@@ -49,7 +49,8 @@ public class TweetController {
             Connection conn = DriverManager.getConnection(Database.DATABASE_URL);
             PreparedStatement stmn = conn.prepareStatement("SELECT * FROM tweets " +
                     "INNER JOIN users ON tweets.user_id = users.id " +
-                    "WHERE username = ?");
+                    "WHERE username = ? " +
+                    "ORDER BY timestamp DESC");
 
             stmn.setString(1, Authentication.currentUserData.getUsername());
 

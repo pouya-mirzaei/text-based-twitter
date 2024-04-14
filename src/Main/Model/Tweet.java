@@ -154,8 +154,9 @@ public class Tweet {
             int id = 0;
             do {
                 id = Twitter.getIntegerInput();
+                if (id >= tweets.size() || id < 1) continue;
                 TweetPage.tweetPage(tweets.get(id - 1));
-            } while (id < 0 || id >= tweets.size());
+            } while (id < 1 || id >= tweets.size());
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -170,6 +171,11 @@ public class Tweet {
         System.out.print("\t@");
         System.out.println(tweet.getUsername() + "\t\t" + new Timestamp(tweet.getCreatedAt()));
         System.out.println("\tContent : " + tweet.getContent());
+        try {
+            System.out.println("\t[Likes] : " + Twitter.tweetsManagerDb.countLikes(tweet.getId()));
+        } catch (SQLException e) {
+            //
+        }
 
     }
 }

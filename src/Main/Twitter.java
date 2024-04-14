@@ -5,6 +5,7 @@ import Main.Controller.UserController;
 import Main.Model.Tweet;
 import Main.Services.Authentication;
 import Main.Services.Database;
+import Main.Services.TweetsManagerDb;
 import Main.View.Colors;
 import Main.View.Menu;
 import Main.View.Typewriter;
@@ -21,6 +22,7 @@ public class Twitter {
     public static UserController userController;
     public static TweetController tweetController;
     public static Authentication auth;
+    public static TweetsManagerDb tweetsManagerDb;
 
 
     public Twitter() throws IllegalAccessException {
@@ -30,6 +32,7 @@ public class Twitter {
         menu = new Menu();
         auth = new Authentication();
         db = new Database();
+        tweetsManagerDb = new TweetsManagerDb();
     }
 
     public static void run() {
