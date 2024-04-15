@@ -40,7 +40,10 @@ public class TweetPage {
                 case 3:
                     Twitter.run();
                     return;
-
+                default:
+                    tw.typeWithColor("Wrong choice, try again ...", Colors.RED, true);
+                    showPage(t);
+                    return;
             }
 
         } catch (SQLException e) {

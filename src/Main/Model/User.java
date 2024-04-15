@@ -139,9 +139,9 @@ public class User {
             Twitter.tw.type("Enter your new password=>");
             password = Twitter.scanner.nextLine();
 
-            if (!Authentication.isInputValid(password, "^(?=.*\\d)(?=.*[a-zA-Z]).{6,}$")) {
+            if (!Authentication.isInputValid(password, "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[A-Za-z\\d]{8,}$")) {
                 Twitter.tw.typeWithColor("Your password is weak and easy to guess. Please choose a stronger one.", Colors.RED, true);
-                Twitter.tw.typeWithColor("  Your password must contain at least 6 characters or more.", Colors.YELLOW, true);
+                Twitter.tw.typeWithColor("  Your password must contain at least 8 characters or more.", Colors.YELLOW, true);
                 Twitter.tw.typeWithColor("  And it must also include both uppercase and lowercase letters and at least one number for added security.", Colors.YELLOW, true);
                 continue;
             }

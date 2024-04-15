@@ -100,8 +100,17 @@ public class Tweet {
     public static void previewTweets(List<Tweet> tweets) {
 
         Twitter.scanner.nextLine();
+
+        if (tweets.isEmpty()) {
+            Twitter.tw.typeWithColor("You have not posted any tweet yet!", Colors.YELLOW, true);
+            Twitter.tw.typeWithColor("Try tweet a post !", Colors.YELLOW, true);
+            Twitter.tw.typeWithColor("Press any key to continue ...", Colors.WHITE, true);
+            Twitter.scanner.nextLine();
+            Twitter.run();
+            return;
+        }
+
         try {
-            tweets = Twitter.tweetController.getCurrentUserTweets();
             for (int i = 0; i < tweets.size(); i++) {
                 Twitter.tw.typeWithColor(i + 1 + ".", Colors.PURPLE, true);
 
@@ -120,18 +129,17 @@ public class Tweet {
                         if (text.equals("more")) {
                             break;
                         }
-                        id = -1;
                         try {
                             id = Integer.parseInt(text);
                         } catch (NumberFormatException e) {
                             Twitter.tw.typeWithColor("You should pass an number or type 'more'", Colors.RED, true);
                         }
                         if (id > 0 && id <= i + 1) {
-                            Twitter.tweetPage.showPage(tweets.get(i));
+                            Twitter.tweetPage.showPage(tweets.get(id - 1));
                             return;
                         }
 
-                    } while (!text.equals("more") || id < 0 || id >= i + 1);
+                    } while (id < 0 || id >= i + 1);
 
                     if (text.equals("more")) {
                         continue;
@@ -156,7 +164,7 @@ public class Tweet {
                     Twitter.run();
                     return;
                 }
-                if (id >= tweets.size() || id < 1) continue;
+                if (id > tweets.size() || id < 1) continue;
                 Twitter.tweetPage.showPage(tweets.get(id - 1));
             } while (id < 1 || id >= tweets.size());
         } catch (SQLException e) {

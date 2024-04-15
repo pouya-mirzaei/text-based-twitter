@@ -35,12 +35,19 @@ public class Authentication {
         tw.typeWithColor("Signup Menu :)", Colors.CYAN, true);
 
         // name
-        tw.type("Tell us your name =>");
-        String name = scanner.nextLine();
+
+        String name = "";
+        while (name.isEmpty()) {
+            tw.type("Tell us your name =>");
+            name = scanner.nextLine();
+        }
 
         // last name
-        tw.type("Hey  " + name + "! what is your last name ? =>");
-        String lastName = scanner.nextLine();
+        String lastName = "";
+        while (lastName.isEmpty()) {
+            tw.type("Hey  " + name + "! what is your last name ? =>");
+            lastName = scanner.nextLine();
+        }
 
         // username
         String username;
@@ -76,9 +83,9 @@ public class Authentication {
             tw.type("Create a password for your account (Your password cannot contains spaces)=>");
             password = scanner.nextLine();
 
-            if (!isInputValid(password, "^(?=.*\\d)(?=.*[a-zA-Z]).{6,}$")) {
+            if (!isInputValid(password, "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[A-Za-z\\d]{8,}$")) {
                 tw.typeWithColor("Your password is weak and easy to guess. Please choose a stronger one.", Colors.RED, true);
-                tw.typeWithColor("  Your password must contain at least 6 characters or more.", Colors.YELLOW, true);
+                tw.typeWithColor("  Your password must contain at least 8 characters or more.", Colors.YELLOW, true);
                 tw.typeWithColor("  And it must also include both uppercase and lowercase letters and at least one number for added security.", Colors.YELLOW, true);
                 continue;
             }
