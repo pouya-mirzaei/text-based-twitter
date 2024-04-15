@@ -10,6 +10,7 @@ import Main.View.Typewriter;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 public class TweetController {
@@ -26,11 +27,11 @@ public class TweetController {
         String tweet_content = sc.nextLine();
 
         try {
-            int newTweetId = createTweet(id, tweet_content);
+            createTweet(id, tweet_content);
             tw.typeWithColor("You have tweeted a new post !", Colors.CYAN, true);
             tw.typeWithColor(" Press any key to see your tweet", Colors.CYAN, true);
             sc.nextLine();
-            Twitter.tweetPage.showPage(getTweetById(newTweetId));
+            Twitter.tweetPage.showPage(getTweetById(getCurrentUserLastTweetId()));
 
 
         } catch (SQLException e) {
@@ -65,7 +66,7 @@ public class TweetController {
                 newTweet.setUsername(resultSet.getString("username"));
                 userTweets.add(newTweet);
             }
-            
+
             conn.close();
             return userTweets;
 
@@ -79,7 +80,7 @@ public class TweetController {
             Connection conn = DriverManager.getConnection(Database.DATABASE_URL);
             PreparedStatement stmn = conn.prepareStatement("SELECT * FROM tweets " +
                     "INNER JOIN users ON tweets.user_id = users.id " +
-                    "WHERE id = ? ");
+                    "WHERE tweets.id = ? ");
 
             stmn.setInt(1, id);
 
@@ -101,7 +102,7 @@ public class TweetController {
 
 
     // CREATE
-    public int createTweet(int userId, String tweenContent) throws SQLException {
+    public void createTweet(int userId, String tweenContent) throws SQLException {
         try (Connection connection = DriverManager.getConnection(Database.DATABASE_URL);
              PreparedStatement prepareStatement = connection.prepareStatement("INSERT " +
                      "INTO tweets (user_id, tweet_content) " +
@@ -113,18 +114,28 @@ public class TweetController {
 
             prepareStatement.executeUpdate();
 
-            PreparedStatement stmn = connection.prepareStatement("" +
-                    "SELECT id FROM tweets " +
-                    "WHERE user_id = ? " +
-                    "ORDER BY timestamp DESC");
-            stmn.setInt(1, userId);
-            stmn.execute();
 
-            int id = stmn.getResultSet().getInt("id");
+        } catch (SQLException e) {
+            throw e;
+        }
+    }
 
-            connection.close();
-            return id;
+    public int getCurrentUserLastTweetId() throws SQLException {
+        try (Connection connection = DriverManager.getConnection(Database.DATABASE_URL);
+             PreparedStatement prepareStatement = connection.prepareStatement("" +
+                     "SELECT * FROM tweets " +
+                     "WHERE user_id = ? " +
+                     "ORDER BY timestamp DESC");
+        ) {
+            prepareStatement.setInt(1, Authentication.currentUserId);
 
+            ResultSet rs = prepareStatement.executeQuery();
+
+            if (rs.next()) {
+                return rs.getInt("id");
+            } else {
+                throw new SQLException("There was an error finding the tweet, please try again later...");
+            }
         } catch (SQLException e) {
             throw e;
         }
