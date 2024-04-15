@@ -5,7 +5,6 @@ import Main.Services.Authentication;
 import Main.Services.Database;
 import Main.Twitter;
 import Main.View.Colors;
-import Main.View.TweetPage;
 import Main.View.Typewriter;
 
 import java.sql.*;
@@ -27,11 +26,11 @@ public class TweetController {
         String tweet_content = sc.nextLine();
 
         try {
-            createTweet(id, tweet_content);
+            int newTweetId = createTweet(id, tweet_content);
             tw.typeWithColor("You have tweeted a new post !", Colors.CYAN, true);
             tw.typeWithColor(" Press any key to see your tweet", Colors.CYAN, true);
             sc.nextLine();
-            TweetPage.tweetPage(getCurrentUserTweets().get(2));
+            Twitter.tweetPage.showPage(getTweetById(newTweetId));
 
 
         } catch (SQLException e) {
@@ -66,8 +65,34 @@ public class TweetController {
                 newTweet.setUsername(resultSet.getString("username"));
                 userTweets.add(newTweet);
             }
-
+            
+            conn.close();
             return userTweets;
+
+        } catch (SQLException e) {
+            throw e;
+        }
+    }
+
+    public Tweet getTweetById(int id) throws SQLException {
+        try {
+            Connection conn = DriverManager.getConnection(Database.DATABASE_URL);
+            PreparedStatement stmn = conn.prepareStatement("SELECT * FROM tweets " +
+                    "INNER JOIN users ON tweets.user_id = users.id " +
+                    "WHERE id = ? ");
+
+            stmn.setInt(1, id);
+
+            ResultSet resultSet = stmn.executeQuery();
+            Tweet newTweet = new Tweet(
+                    resultSet.getInt("id"),
+                    resultSet.getString("tweet_content"),
+                    resultSet.getTimestamp("timestamp").getTime(),
+                    resultSet.getInt("user_id")
+            );
+            newTweet.setUsername(resultSet.getString("username"));
+            conn.close();
+            return newTweet;
 
         } catch (SQLException e) {
             throw e;
@@ -76,7 +101,7 @@ public class TweetController {
 
 
     // CREATE
-    public void createTweet(int userId, String tweenContent) throws SQLException {
+    public int createTweet(int userId, String tweenContent) throws SQLException {
         try (Connection connection = DriverManager.getConnection(Database.DATABASE_URL);
              PreparedStatement prepareStatement = connection.prepareStatement("INSERT " +
                      "INTO tweets (user_id, tweet_content) " +
@@ -85,7 +110,20 @@ public class TweetController {
             prepareStatement.setInt(1, userId);
             prepareStatement.setString(2, tweenContent);
 
+
             prepareStatement.executeUpdate();
+
+            PreparedStatement stmn = connection.prepareStatement("" +
+                    "SELECT id FROM tweets " +
+                    "WHERE user_id = ? " +
+                    "ORDER BY timestamp DESC");
+            stmn.setInt(1, userId);
+            stmn.execute();
+
+            int id = stmn.getResultSet().getInt("id");
+
+            connection.close();
+            return id;
 
         } catch (SQLException e) {
             throw e;

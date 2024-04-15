@@ -81,11 +81,6 @@ public class UserController {
         if (PasswordHasher.checkPassword(password, mainUser.getPassword())) {
             Authentication.currentUserId = mainUser.getId();
             Authentication.currentUserData = mainUser;
-            try {
-                Twitter.tweetController.getCurrentUserTweets();
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
             return;
         }
 

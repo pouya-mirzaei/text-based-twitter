@@ -1,9 +1,7 @@
 package Main.Model;
 
-import Main.Model.User;
 import Main.Twitter;
 import Main.View.Colors;
-import Main.View.TweetPage;
 
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -129,7 +127,7 @@ public class Tweet {
                             Twitter.tw.typeWithColor("You should pass an number or type 'more'", Colors.RED, true);
                         }
                         if (id > 0 && id <= i + 1) {
-                            TweetPage.tweetPage(tweets.get(i));
+                            Twitter.tweetPage.showPage(tweets.get(i));
                             return;
                         }
 
@@ -140,7 +138,7 @@ public class Tweet {
                     }
 
                     if (id > 0 && id <= i + 1) {
-                        TweetPage.tweetPage(tweets.get(i));
+                        Twitter.tweetPage.showPage(tweets.get(i));
                         return;
                     } else {
                         Twitter.tw.typeWithColor("wrong choice, try again...", Colors.RED, true);
@@ -150,20 +148,20 @@ public class Tweet {
                 }
             }
             Twitter.tw.typeWithColor("That's all you got!", Colors.PURPLE, true);
-            Twitter.tw.typeWithColor("Select one to see the details", Colors.PURPLE, true);
+            Twitter.tw.typeWithColor("Select one to see the details(-1 to return)", Colors.PURPLE, true);
             int id = 0;
             do {
                 id = Twitter.getIntegerInput();
+                if (id == -1) {
+                    Twitter.run();
+                    return;
+                }
                 if (id >= tweets.size() || id < 1) continue;
-                TweetPage.tweetPage(tweets.get(id - 1));
+                Twitter.tweetPage.showPage(tweets.get(id - 1));
             } while (id < 1 || id >= tweets.size());
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-
-        Twitter.run();// -------------------------------------------------------------
-
-
     }
 
 

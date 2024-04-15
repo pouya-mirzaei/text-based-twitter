@@ -8,6 +8,7 @@ import Main.Services.Database;
 import Main.Services.TweetsManagerDb;
 import Main.View.Colors;
 import Main.View.Menu;
+import Main.View.TweetPage;
 import Main.View.Typewriter;
 
 import java.sql.SQLException;
@@ -23,6 +24,7 @@ public class Twitter {
     public static TweetController tweetController;
     public static Authentication auth;
     public static TweetsManagerDb tweetsManagerDb;
+    public static TweetPage tweetPage;
 
 
     public Twitter() throws IllegalAccessException {
@@ -33,6 +35,7 @@ public class Twitter {
         auth = new Authentication();
         db = new Database();
         tweetsManagerDb = new TweetsManagerDb();
+        tweetPage = new TweetPage();
     }
 
     public static void run() {

@@ -5,35 +5,37 @@ import java.sql.*;
 
 public class TweetsManagerDb {
     public boolean likeTweet(int tweetId) throws SQLException {
-        try {
-            Connection conn = DriverManager.getConnection(Database.DATABASE_URL);
-            PreparedStatement statement = conn.prepareStatement("" +
+        try (Connection conn = DriverManager.getConnection(Database.DATABASE_URL)) {
+            // Check if user already likes the tweet
+            try (PreparedStatement checkStatement = conn.prepareStatement("" +
                     "SELECT * FROM likes " +
-                    "WHERE user_id = ? AND tweet_id = ?");
-            statement.setInt(1, Authentication.currentUserId);
-            statement.setInt(2, tweetId);
-            statement.execute();
+                    "WHERE user_id = ? AND tweet_id = ?")) {
+                checkStatement.setInt(1, Authentication.currentUserId);
+                checkStatement.setInt(2, tweetId);
+                checkStatement.execute();
 
-            ResultSet rs = statement.getResultSet();
-
-            if (rs.next()) {
-                return false;
+                ResultSet rs = checkStatement.getResultSet();
+                if (rs.next()) {
+                    return false;
+                }
             }
-            statement = conn.prepareStatement("INSERT INTO likes (user_id,tweet_id) " +
-                    "VALUES (?,?) ");
-            statement.setInt(1, Authentication.currentUserId);
-            statement.setInt(2, tweetId);
-            statement.execute();
 
+            // If not liked, insert a new like
+            try (PreparedStatement insertStatement = conn.prepareStatement("INSERT INTO likes (user_id,tweet_id) " +
+                    "VALUES (?,?) ")) {
+                insertStatement.setInt(1, Authentication.currentUserId);
+                insertStatement.setInt(2, tweetId);
+                insertStatement.execute();
+            }
 
-            return true;
+            return true; // Like inserted successfully
         } catch (SQLException e) {
             throw e;
         }
+
     }
 
     public boolean unlikeTweet(int tweetId) throws SQLException {
-
         try (Connection conn = DriverManager.getConnection(Database.DATABASE_URL);
              PreparedStatement statement = conn.prepareStatement("" +
                      "DELETE FROM likes " +
@@ -41,13 +43,13 @@ public class TweetsManagerDb {
 
             statement.setInt(1, Authentication.currentUserData.getId());
             statement.setInt(2, tweetId);
-
             int result = statement.executeUpdate();
 
             return result == 1;
         } catch (SQLException e) {
             throw e;
         }
+
     }
 
     public int countLikes(int tweetId) throws SQLException {
