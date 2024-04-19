@@ -97,13 +97,13 @@ public class Tweet {
 
     }
 
-    public static void previewTweets(List<Tweet> tweets) {
+    public static void previewTweets(List<Tweet> tweets) throws SQLException {
 
         Twitter.scanner.nextLine();
 
         if (tweets.isEmpty()) {
-            Twitter.tw.typeWithColor("You have not posted any tweet yet!", Colors.YELLOW, true);
-            Twitter.tw.typeWithColor("Try tweet a post !", Colors.YELLOW, true);
+            Twitter.tw.typeWithColor("You have not posted any tweet yet!", Colors.RED, true);
+            Twitter.tw.typeWithColor("Try tweet a post !", Colors.RED, true);
             Twitter.tw.typeWithColor("Press any key to continue ...", Colors.WHITE, true);
             Twitter.scanner.nextLine();
             Twitter.run();
@@ -168,19 +168,19 @@ public class Tweet {
                 Twitter.tweetPage.showPage(tweets.get(id - 1));
             } while (id < 1 || id >= tweets.size());
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw e;
         }
     }
 
 
-    private static void tweetPreview(Tweet tweet) {
+    private static void tweetPreview(Tweet tweet) throws SQLException {
         System.out.print("\t@");
         System.out.println(tweet.getUsername() + "\t\t" + new Timestamp(tweet.getCreatedAt()));
         System.out.println("\tContent : " + tweet.getContent());
         try {
             System.out.println("\t[Likes] : " + Twitter.tweetsManagerDb.countLikes(tweet.getId()));
         } catch (SQLException e) {
-            //
+            throw e;
         }
 
     }

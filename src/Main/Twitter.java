@@ -90,7 +90,8 @@ public class Twitter {
                     Tweet.previewTweets(tweetController.getCurrentUserTweets());
                 } catch (SQLException e) {
                     tw.typeWithColor("There was an error while fetching the data from the database", Colors.RED, true);
-                    tw.type(" Press any key to continue ...");
+                    tw.typeWithColor("Error message :" + e.getMessage(), Colors.RED, true);
+                    tw.type("Press any key to continue ...");
                     scanner.nextLine();
                     Twitter.run();
                     return;
