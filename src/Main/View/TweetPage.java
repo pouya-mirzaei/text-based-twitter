@@ -1,6 +1,8 @@
 package Main.View;
 
+import Main.Controller.CommentController;
 import Main.Controller.TweetController;
+import Main.Model.Comment;
 import Main.Model.Tweet;
 import Main.Services.Authentication;
 import Main.Services.TweetsManagerDb;
@@ -8,11 +10,12 @@ import Main.Twitter;
 
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.Scanner;
+import java.util.*;
 
 public class TweetPage {
     private final TweetController tweetController = Twitter.tweetController;
     private final TweetsManagerDb tweetsManagerDb = Twitter.tweetsManagerDb;
+    private final CommentController commentController = Twitter.commentController;
     private final Typewriter tw = Twitter.tw;
     private final Scanner sc = Twitter.scanner;
 
@@ -54,6 +57,9 @@ public class TweetPage {
         // comments :
         System.out.println();
         tw.typeWithColor("Comments section : ", Colors.YELLOW, true);
+
+        List<Comment> comments = commentController.fetchCommentsWithReplies(t.getId());
+        displayComments(comments, 0);
 
 
         tw.typeWithColor("Select your choice :", Colors.WHITE, true);
@@ -107,10 +113,41 @@ public class TweetPage {
         Twitter.run();
     }
 
-    private void handleCommenting(Tweet t) {
+    private void handleCommenting(Tweet t) throws SQLException {
         tw.typeWithColor("Write your comment and then press enter", Colors.BLUE, true);
         String comment = sc.nextLine();
-        tweetsManagerDb.commentTo(t, comment);
+        try {
+            tweetsManagerDb.commentTo(t, comment);
+            tw.typeWithColor("Your comment had been submitted!", Colors.GREEN, true);
+            tw.typeWithColor("Press any key to continue...", Colors.BLUE, true);
+            sc.nextLine();
+            showPage(t);
+        } catch (SQLException e) {
+            throw e;
+        }
     }
 
+    public void displayComments(List<Comment> comments, int depth) {
+        if (comments == null || comments.isEmpty()) {
+            return;
+        }
+
+        for (Comment comment : comments) {
+            if (depth == 0) {
+                if (comment.getParentCommentId() != 0) {
+                    continue;
+                }
+            }
+            // Indentation based on depth for better visualization
+            for (int i = 0; i < depth; i++) {
+                System.out.print("  ");
+            }
+            // Display comment details
+            System.out.println("User: " + comment.getUsername() + ", Comment: " + comment.getCommentContent());
+
+            // Display nested replies recursively
+            displayComments(comment.getReplies(), depth + 1);
+        }
+
+    }
 }

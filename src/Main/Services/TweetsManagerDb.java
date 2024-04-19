@@ -91,9 +91,18 @@ public class TweetsManagerDb {
         }
     }
 
-    public void commentTo(Tweet t, String commentMessage) {
-        System.out.println("Commenting ... ");
-        Twitter.scanner.nextLine();
-        Twitter.run();
+    public void commentTo(Tweet t, String commentMessage) throws SQLException {
+        try (Connection connection = DriverManager.getConnection(Database.DATABASE_URL);
+             PreparedStatement stmt = connection.prepareStatement("INSERT INTO comments (tweet_id, user_id, comment_content, parent_comment_id) VALUES (?, ?, ?, ?)")) {
+            stmt.setInt(1, t.getId());
+            stmt.setInt(2, Authentication.currentUserId);
+            stmt.setString(3, commentMessage);
+            stmt.setInt(4, 0);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            throw e;
+        }
+
+
     }
 }

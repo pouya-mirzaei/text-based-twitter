@@ -1,5 +1,6 @@
 package Main;
 
+import Main.Controller.CommentController;
 import Main.Controller.TweetController;
 import Main.Controller.UserController;
 import Main.Model.Tweet;
@@ -22,6 +23,7 @@ public class Twitter {
     public static Menu menu;
     public static UserController userController;
     public static TweetController tweetController;
+    public static CommentController commentController;
     public static Authentication auth;
     public static TweetsManagerDb tweetsManagerDb;
     public static TweetPage tweetPage;
@@ -31,6 +33,7 @@ public class Twitter {
         scanner = new Scanner(System.in);
         userController = new UserController();
         tweetController = new TweetController();
+        commentController = new CommentController();
         menu = new Menu();
         auth = new Authentication();
         db = new Database();
