@@ -17,7 +17,8 @@ public class CommentController {
         try (Connection connection = DriverManager.getConnection(Database.DATABASE_URL);
              PreparedStatement stmt = connection.prepareStatement("SELECT * FROM comments " +
                      "INNER JOIN users ON users.id = comments.user_id " +
-                     "WHERE tweet_id = ?")) {
+                     "WHERE tweet_id = ? " +
+                     "ORDER BY timestamp ASC")) {
             stmt.setInt(1, postId);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {

@@ -18,6 +18,7 @@ public class TweetPage {
     private final CommentController commentController = Twitter.commentController;
     private final Typewriter tw = Twitter.tw;
     private final Scanner sc = Twitter.scanner;
+    private static int commentCounter = 0;
 
     public void showPage(Tweet t) throws SQLException {
 
@@ -32,11 +33,11 @@ public class TweetPage {
 
         //first choice : user page
         tw.typeWithColor("2. ", Colors.PURPLE, false);
-        Twitter.tw.typeWithColor("@" + t.getUsername(), Colors.BLUE, false);
-        Twitter.tw.typeWithColor("\t\t" + new Timestamp(t.getCreatedAt()), Colors.WHITE, true);
+        tw.typeWithColor("@" + t.getUsername(), Colors.BLUE, false);
+        tw.typeWithColor("\t\t" + new Timestamp(t.getCreatedAt()), Colors.WHITE, true);
 
-        Twitter.tw.typeWithColor("   Content : ", Colors.YELLOW, false);
-        Twitter.tw.type(Typewriter.splitLongString(t.getContent(), 100));
+        tw.typeWithColor("   Content : ", Colors.YELLOW, false);
+        tw.type(Typewriter.splitLongString(t.getContent(), 100));
 
         // second choice : likes
         tw.typeWithColor("3. ", Colors.PURPLE, false);
@@ -58,6 +59,8 @@ public class TweetPage {
         System.out.println();
         tw.typeWithColor("Comments section : ", Colors.YELLOW, true);
 
+
+        commentCounter = 0;
         List<Comment> comments = commentController.fetchCommentsWithReplies(t.getId());
         displayComments(comments, 0);
 
@@ -83,9 +86,38 @@ public class TweetPage {
                 handleCommenting(t);
                 break;
             default:
-                showPage(t);
+                if (choice < commentCounter + 6) {
+                    handleReply(t, getCommentToReply(comments, choice));
+                } else {
+                    tw.typeWithColor("Wrong choice!", Colors.RED, true);
+                    tw.typeWithColor("Press any key to try again!", Colors.RED, true);
+                    sc.nextLine();
+                    showPage(t);
+                }
         }
 
+    }
+
+    private void handleReply(Tweet t, Comment commentToReply) throws SQLException {
+        tw.typeWithColor("You are replying to " + commentToReply.getUsername() + "'s comment", Colors.PURPLE, true);
+        tw.typeWithColor("Type your comment :", Colors.WHITE, true);
+        String comment = sc.nextLine();
+        tweetsManagerDb.replyTo(t, commentToReply, comment);
+        showPage(t);
+    }
+
+    private Comment getCommentToReply(List<Comment> allComments, int num) {
+        num -= 5;
+        for (Comment comment : allComments) {
+            if (comment.getDisplayingId() == num) return comment;
+
+            List<Comment> replies = comment.getReplies();
+            for (Comment reply : replies) {
+                if (reply.getDisplayingId() == num) return reply;
+            }
+        }
+
+        return null;
     }
 
     private void handleLike(Tweet t) throws SQLException {
@@ -140,10 +172,14 @@ public class TweetPage {
             }
             // Indentation based on depth for better visualization
             for (int i = 0; i < depth; i++) {
-                System.out.print("  ");
+                System.out.print("\t");
             }
             // Display comment details
-            System.out.println("User: " + comment.getUsername() + ", Comment: " + comment.getCommentContent());
+            tw.typeWithColor(commentCounter++ + 6 + ". ", Colors.PURPLE, false);
+            tw.typeWithColor("@" + comment.getUsername() + " : ", Colors.YELLOW, false);
+            comment.setDisplayingId(commentCounter);
+
+            tw.type(Typewriter.splitLongString(comment.getCommentContent(), 100));
 
             // Display nested replies recursively
             displayComments(comment.getReplies(), depth + 1);

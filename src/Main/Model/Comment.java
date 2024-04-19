@@ -16,6 +16,7 @@ public class Comment {
     private int parentCommentId;
     private String username;
     private List<Comment> replies;
+    private int displayingId;
 
     public Comment(int id, int tweetId, int userId, String commentContent, long createdAt, int parentCommentId) {
         this.id = id;
@@ -30,7 +31,7 @@ public class Comment {
     public Comment(int id, int postId, int userId, String commentContent, long createdAt, int parentCommentId, String username) {
         this(id, postId, userId, commentContent, createdAt, parentCommentId);
         this.username = username;
-      
+
     }
 
     // Getters and setters (omitted for brevity)
@@ -97,5 +98,13 @@ public class Comment {
 
     public void setReplies(List<Comment> replies) {
         this.replies = replies;
+    }
+
+    public int getDisplayingId() {
+        return displayingId;
+    }
+
+    public void setDisplayingId(int displayingId) {
+        this.displayingId = displayingId;
     }
 }

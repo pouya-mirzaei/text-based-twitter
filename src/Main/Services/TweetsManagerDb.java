@@ -1,6 +1,7 @@
 package Main.Services;
 
 
+import Main.Model.Comment;
 import Main.Model.Tweet;
 import Main.Twitter;
 
@@ -102,7 +103,18 @@ public class TweetsManagerDb {
         } catch (SQLException e) {
             throw e;
         }
+    }
 
-
+    public void replyTo(Tweet t, Comment c, String comment) throws SQLException {
+        try (Connection connection = DriverManager.getConnection(Database.DATABASE_URL);
+             PreparedStatement stmt = connection.prepareStatement("INSERT INTO comments (tweet_id, user_id, comment_content, parent_comment_id) VALUES (?, ?, ?, ?)")) {
+            stmt.setInt(1, t.getId());
+            stmt.setInt(2, Authentication.currentUserId);
+            stmt.setString(3, comment);
+            stmt.setInt(4, c.getId());
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            throw e;
+        }
     }
 }
