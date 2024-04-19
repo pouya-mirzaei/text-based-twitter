@@ -174,11 +174,15 @@ public class Tweet {
 
 
     private static void tweetPreview(Tweet tweet) throws SQLException {
-        System.out.print("\t@");
-        System.out.println(tweet.getUsername() + "\t\t" + new Timestamp(tweet.getCreatedAt()));
-        System.out.println("\tContent : " + tweet.getContent());
+        Twitter.tw.typeWithColor("\t@" + tweet.getUsername(), Colors.BLUE, false);
+        Twitter.tw.typeWithColor("\t\t" + new Timestamp(tweet.getCreatedAt()), Colors.WHITE, true);
+        Twitter.tw.typeWithColor("\tContent : ", Colors.YELLOW, false);
+        Twitter.tw.type(tweet.getContent());
+
+
         try {
-            System.out.println("\t[Likes] : " + Twitter.tweetsManagerDb.countLikes(tweet.getId()));
+            Twitter.tw.typeWithColor("\t[Likes] : ", Colors.PURPLE, false);
+            Twitter.tw.type(String.valueOf(Twitter.tweetsManagerDb.countLikes(tweet.getId())));
         } catch (SQLException e) {
             throw e;
         }

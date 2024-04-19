@@ -4,6 +4,7 @@ import Main.Services.Authentication;
 import Main.Services.PasswordHasher;
 import Main.Twitter;
 import Main.View.Colors;
+import Main.View.Typewriter;
 
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -172,7 +173,7 @@ public class User {
 
         Twitter.tw.typeWithColor("Name : " + name + " " + lastName, Colors.BLUE, true);
         Twitter.tw.typeWithColor("Username : @" + username, Colors.BLUE, true);
-        Twitter.tw.typeWithColor("Bio : " + bio, Colors.BLUE, true);
+        Twitter.tw.typeWithColor("Bio : " + Typewriter.splitLongString(bio, 100), Colors.BLUE, true);
         Twitter.tw.typeWithColor("Joined : " + time, Colors.BLUE, true);
 
     }
@@ -285,14 +286,8 @@ public class User {
     // ---------------------------------------------------- tweets
 
 
-    public void tweet() {
-        try {
-            Twitter.tweetController.tweet(this.getId());
-        } catch (SQLException e) {
-            Twitter.tw.typeWithColor("Error : " + e.getMessage(), Colors.RED, true);
-            Twitter.tw.typeWithColor("Press any key to go back to the main menu " + e.getMessage(), Colors.RED, true);
-            Twitter.scanner.nextLine();
-            Twitter.run();
-        }
+    public void tweet() throws SQLException {
+        Twitter.tweetController.tweet(this.getId());
+
     }
 }

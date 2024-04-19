@@ -1,23 +1,16 @@
 package Main.Services;
 
 
+import Main.Model.Tweet;
+import Main.Twitter;
+
 import java.sql.*;
 
 public class TweetsManagerDb {
     public boolean likeTweet(int tweetId) throws SQLException {
         try (Connection conn = DriverManager.getConnection(Database.DATABASE_URL)) {
-            // Check if user already likes the tweet
-            try (PreparedStatement checkStatement = conn.prepareStatement("" +
-                    "SELECT * FROM likes " +
-                    "WHERE user_id = ? AND tweet_id = ?")) {
-                checkStatement.setInt(1, Authentication.currentUserId);
-                checkStatement.setInt(2, tweetId);
-                checkStatement.execute();
-
-                ResultSet rs = checkStatement.getResultSet();
-                if (rs.next()) {
-                    return false;
-                }
+            if (isUserAlreadyLiked(Authentication.currentUserId, tweetId)) {
+                return false;
             }
 
             // If not liked, insert a new like
@@ -96,5 +89,11 @@ public class TweetsManagerDb {
         } catch (SQLException e) {
             throw e;
         }
+    }
+
+    public void commentTo(Tweet t, String commentMessage) {
+        System.out.println("Commenting ... ");
+        Twitter.scanner.nextLine();
+        Twitter.run();
     }
 }

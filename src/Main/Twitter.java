@@ -81,37 +81,36 @@ public class Twitter {
             }
         } while (condition);
 
-        switch (userInput) {
-            case 1:
-                // home page
-                break;
-            case 2:
-                try {
+        try {
+            switch (userInput) {
+                case 1:
+                    Tweet.previewTweets(tweetController.getAllTweets());
+                    break;
+                case 2:
                     Tweet.previewTweets(tweetController.getCurrentUserTweets());
-                } catch (SQLException e) {
-                    tw.typeWithColor("There was an error while fetching the data from the database", Colors.RED, true);
-                    tw.typeWithColor("Error message :" + e.getMessage(), Colors.RED, true);
-                    tw.type("Press any key to continue ...");
-                    scanner.nextLine();
+                    break;
+                case 3:
+                    // search
+                    break;
+                case 4:
+                    Authentication.currentUserData.tweet();
+                    break;
+                case 5:
+                    // profile
+                    Authentication.currentUserData.profileSettings();
+                    break;
+                case 6:
+                    userController.logout();
                     Twitter.run();
-                    return;
-                }
-                break;
-            case 3:
-                // search
-                break;
-            case 4:
-                Authentication.currentUserData.tweet();
-                break;
-            case 5:
-                // profile
-                Authentication.currentUserData.profileSettings();
-                break;
-            case 6:
-                userController.logout();
-                Twitter.run();
-                break;
+                    break;
 
+            }
+        } catch (SQLException e) {
+            tw.typeWithColor("There was an error while fetching the data from the database", Colors.RED, true);
+            tw.typeWithColor("Error message :" + e.getMessage(), Colors.RED, true);
+            tw.type("Press any key to continue ...");
+            scanner.nextLine();
+            Twitter.run();
         }
 
     }

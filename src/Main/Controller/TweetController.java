@@ -10,7 +10,6 @@ import Main.View.Typewriter;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 public class TweetController {
@@ -55,6 +54,36 @@ public class TweetController {
             stmn.setString(1, Authentication.currentUserData.getUsername());
 
             ResultSet resultSet = stmn.executeQuery();
+            List<Tweet> userTweets = new ArrayList<>();
+            while (resultSet.next()) {
+                Tweet newTweet = new Tweet(
+                        resultSet.getInt("id"),
+                        resultSet.getString("tweet_content"),
+                        resultSet.getTimestamp("timestamp").getTime(),
+                        resultSet.getInt("user_id")
+                );
+                newTweet.setUsername(resultSet.getString("username"));
+                userTweets.add(newTweet);
+            }
+
+            conn.close();
+            return userTweets;
+
+        } catch (SQLException e) {
+            throw e;
+        }
+    }
+
+    public List<Tweet> getAllTweets() throws SQLException {
+        try {
+            Connection conn = DriverManager.getConnection(Database.DATABASE_URL);
+
+            Statement stmn = conn.createStatement();
+            String sql = "SELECT * from tweets " +
+                    "INNER JOIN users ON tweets.user_id = users.id " +
+                    "ORDER BY timestamp DESC";
+
+            ResultSet resultSet = stmn.executeQuery(sql);
             List<Tweet> userTweets = new ArrayList<>();
             while (resultSet.next()) {
                 Tweet newTweet = new Tweet(
