@@ -185,7 +185,7 @@ public class User {
         Twitter.userPage.showPage(Authentication.currentUserData);
     }
 
-    private void editProfile() {
+    public void editProfile() {
         String[] menuItems = {"Change your name", "Change password", "Change bio", "Back"};
 
         int userInput = 0;

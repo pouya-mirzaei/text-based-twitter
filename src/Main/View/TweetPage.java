@@ -110,8 +110,15 @@ public class TweetPage {
     }
 
     private void handleUserLiked(Tweet t) throws SQLException {
-        tw.typeWithColor("The users who liked this tweet : ", Colors.BLUE, true);
         List<User> users = tweetsManagerDb.getUsersWhoLikedTweet(t.getId());
+        if (users.isEmpty()) {
+            tw.typeWithColor("No body liked this tweet", Colors.YELLOW, true);
+            tw.typeWithColor("Press any key to continue...", Colors.WHITE, true);
+            sc.nextLine();
+            showPage(t);
+            return;
+        }
+        tw.typeWithColor("The users who liked this tweet : ", Colors.BLUE, true);
         Twitter.userController.printAListOfUsers(users);
 
         tw.typeWithColor("Select the user that you want to visit :(press -1 to return)", Colors.WHITE, true);

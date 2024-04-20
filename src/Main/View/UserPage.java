@@ -70,19 +70,22 @@ public class UserPage {
         tw.typeWithColor("@" + user.getUsername() + "'s Tweets", Colors.YELLOW, true);
 
         int choice = Twitter.getIntegerInput();
-        sc.nextLine();
 
         switch (choice) {
             case 1:
+                sc.nextLine();
                 Twitter.run();
                 break;
             case 2:
+                sc.nextLine();
                 handleFollowing(user);
                 break;
             case 3:
+                sc.nextLine();
                 handleListOfFollowings(user);
                 break;
             case 4:
+                sc.nextLine();
                 handleListOfFollowers(user);
                 break;
             case 5:
@@ -143,7 +146,7 @@ public class UserPage {
 
         switch (pageStatus) {
             case 1:
-                Authentication.currentUserData.profileSettings();
+                Authentication.currentUserData.editProfile();
                 break;
             case 2:
                 userController.followUser(user);
