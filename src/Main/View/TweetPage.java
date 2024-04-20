@@ -4,6 +4,7 @@ import Main.Controller.CommentController;
 import Main.Controller.TweetController;
 import Main.Model.Comment;
 import Main.Model.Tweet;
+import Main.Model.User;
 import Main.Services.Authentication;
 import Main.Services.TweetsManagerDb;
 import Main.Twitter;
@@ -16,6 +17,7 @@ public class TweetPage {
     private final TweetController tweetController = Twitter.tweetController;
     private final TweetsManagerDb tweetsManagerDb = Twitter.tweetsManagerDb;
     private final CommentController commentController = Twitter.commentController;
+    private final UserPage userPage = Twitter.userPage;
     private final Typewriter tw = Twitter.tw;
     private final Scanner sc = Twitter.scanner;
     private static int commentCounter = 0;
@@ -74,13 +76,13 @@ public class TweetPage {
                 Twitter.run();
                 return;
             case 2:
-                //user page
+                handleAuthorPage(t);
                 break;
             case 3:
                 handleLike(t);
                 break;
             case 4:
-                showLikedUsers(t);
+                handleUserLiked(t);
                 break;
             case 5:
                 handleCommenting(t);
@@ -98,6 +100,34 @@ public class TweetPage {
 
     }
 
+    private void handleAuthorPage(Tweet t) {
+        userPage.showPage(Twitter.userController.getUserById(t.getUserId()));
+    }
+
+    private void handleUserLiked(Tweet t) throws SQLException {
+        tw.typeWithColor("The users who liked this tweet : ", Colors.BLUE, true);
+        List<User> users = tweetsManagerDb.getUsersWhoLikedTweet(t.getId());
+        int userCounter = 1;
+        for (User user : users) {
+            tw.typeWithColor("  " + userCounter++ + ". ", Colors.PURPLE, false);
+            tw.typeWithColor("@" + user.getUsername(), Colors.YELLOW, true);
+        }
+        tw.typeWithColor("Select your choice :", Colors.WHITE, true);
+        int choice = Twitter.getIntegerInput();
+        sc.nextLine();
+
+        if (choice > 0 && choice <= users.size()) {
+            userPage.showPage(users.get(choice - 1));
+        } else {
+            tw.typeWithColor("Wrong choice!", Colors.RED, true);
+            tw.typeWithColor("Press any key to try again!", Colors.RED, true);
+            sc.nextLine();
+            showPage(t);
+        }
+
+
+    }
+
     private void handleReply(Tweet t, Comment commentToReply) throws SQLException {
         tw.typeWithColor("You are replying to " + commentToReply.getUsername() + "'s comment", Colors.PURPLE, true);
         tw.typeWithColor("Type your comment :", Colors.WHITE, true);
@@ -106,7 +136,7 @@ public class TweetPage {
         showPage(t);
     }
 
-    private Comment getCommentToReply(List<Comment> allComments, int num) {
+    private Comment getCommentToReply(List<Comment> allComments, int num) throws SQLException {
         num -= 5;
         for (Comment comment : allComments) {
             if (comment.getDisplayingId() == num) return comment;
@@ -116,8 +146,7 @@ public class TweetPage {
                 if (reply.getDisplayingId() == num) return reply;
             }
         }
-
-        return null;
+        throw new SQLException("Comment didn't found !");
     }
 
     private void handleLike(Tweet t) throws SQLException {
@@ -138,12 +167,6 @@ public class TweetPage {
         }
     }
 
-
-    private void showLikedUsers(Tweet t) {
-        System.out.println("handling ... ");
-        Twitter.scanner.nextLine();
-        Twitter.run();
-    }
 
     private void handleCommenting(Tweet t) throws SQLException {
         tw.typeWithColor("Write your comment and then press enter", Colors.BLUE, true);

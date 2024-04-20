@@ -7,10 +7,7 @@ import Main.Model.Tweet;
 import Main.Services.Authentication;
 import Main.Services.Database;
 import Main.Services.TweetsManagerDb;
-import Main.View.Colors;
-import Main.View.Menu;
-import Main.View.TweetPage;
-import Main.View.Typewriter;
+import Main.View.*;
 
 import java.sql.SQLException;
 import java.util.Scanner;
@@ -26,6 +23,7 @@ public class Twitter {
     public static CommentController commentController;
     public static Authentication auth;
     public static TweetsManagerDb tweetsManagerDb;
+    public static UserPage userPage;
     public static TweetPage tweetPage;
 
 
@@ -38,6 +36,7 @@ public class Twitter {
         auth = new Authentication();
         db = new Database();
         tweetsManagerDb = new TweetsManagerDb();
+        userPage = new UserPage();
         tweetPage = new TweetPage();
     }
 

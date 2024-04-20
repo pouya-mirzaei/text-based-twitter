@@ -18,6 +18,7 @@ public class Tweet {
     private String username;
     private List<User> liked;
     private List<User> retweets;
+    private static final int paginationCount = 5;
 
     // Getters and Setters
 
@@ -118,7 +119,7 @@ public class Tweet {
                 tweetPreview(tweets.get(i));
                 Twitter.tw.typeWithColor("------------------------------------------------------------------------------------------", Colors.GREEN, true);
 
-                if (i % 3 == 2 && i != tweets.size() - 1) {
+                if (i % paginationCount == paginationCount - 1 && i != tweets.size() - 1) {
                     Twitter.tw.typeWithColor("Type 'more' to see more tweets", Colors.YELLOW, true);
                     Twitter.tw.typeWithColor("Or Enter the number of the tweet that you want to see", Colors.YELLOW, true);
                     String text;
