@@ -5,9 +5,11 @@ import Main.Controller.UserController;
 import Main.Model.Tweet;
 import Main.Model.User;
 import Main.Services.Authentication;
+import Main.Services.TweetsManagerDb;
 import Main.Twitter;
 
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Scanner;
 
 public class UserPage {
@@ -15,6 +17,7 @@ public class UserPage {
     private final Scanner sc = Twitter.scanner;
     private final TweetController tweetController = Twitter.tweetController;
     private final UserController userController = Twitter.userController;
+    private final TweetsManagerDb tweetsManagerDb = Twitter.tweetsManagerDb;
     private final int AUTHOR = 1;
     private final int NOT_FOLLOWED_PAGE = 2;
     private final int FOLLOWED_PAGE = 3;
@@ -74,33 +77,88 @@ public class UserPage {
                 Twitter.run();
                 break;
             case 2:
-                switch (pageStatus) {
-                    case 1:
-                        // edit page
-                        break;
-                    case 2:
-                        userController.followUser(user);
-                        tw.typeWithColor("You have Followed this user successfully!", Colors.GREEN, true);
-                        tw.typeWithColor("Press any key to continue...", Colors.WHITE, true);
-                        sc.nextLine();
-                        showPage(userController.getUserById(user.getId()));
-                        return;
-                    case 3:
-                        userController.unfollowUser(user);
-                        tw.typeWithColor("You have Unfollowed this user successfully!", Colors.GREEN, true);
-                        tw.typeWithColor("Press any key to continue...", Colors.WHITE, true);
-                        sc.nextLine();
-                        showPage(userController.getUserById(user.getId()));
-                        return;
-                }
+                handleFollowing(user);
                 break;
             case 3:
+                handleListOfFollowings(user);
                 break;
             case 4:
+                handleListOfFollowers(user);
                 break;
             case 5:
                 Tweet.previewTweets(tweetController.getUserTweets(user));
                 break;
+        }
+    }
+
+    private void handleListOfFollowers(User user) throws SQLException {
+        List<User> followerUsers = tweetsManagerDb.getFollowers(user.getId());
+        userController.printAListOfUsers(followerUsers);
+
+        tw.typeWithColor("Select the user that you want to visit :(press -1 to return)", Colors.WHITE, true);
+        int choice = Twitter.getIntegerInput();
+        sc.nextLine();
+
+        if (choice == -1) {
+            showPage(user);
+            return;
+        }
+
+        if (choice > 0 && choice <= followerUsers.size()) {
+            showPage(followerUsers.get(choice - 1));
+        } else {
+            tw.typeWithColor("Wrong choice!", Colors.RED, true);
+            tw.typeWithColor("Press any key to try again!", Colors.RED, true);
+            sc.nextLine();
+            showPage(user);
+        }
+
+    }
+
+    private void handleListOfFollowings(User user) throws SQLException {
+        List<User> followingUsers = tweetsManagerDb.getFollowings(user.getId());
+        userController.printAListOfUsers(followingUsers);
+
+        tw.typeWithColor("Select the user that you want to visit :(press -1 to return)", Colors.WHITE, true);
+        int choice = Twitter.getIntegerInput();
+        sc.nextLine();
+
+        if (choice == -1) {
+            showPage(user);
+            return;
+        }
+
+        if (choice > 0 && choice <= followingUsers.size()) {
+            showPage(followingUsers.get(choice - 1));
+        } else {
+            tw.typeWithColor("Wrong choice!", Colors.RED, true);
+            tw.typeWithColor("Press any key to try again!", Colors.RED, true);
+            sc.nextLine();
+            showPage(user);
+        }
+
+    }
+
+    private void handleFollowing(User user) throws SQLException {
+
+        switch (pageStatus) {
+            case 1:
+                Authentication.currentUserData.profileSettings();
+                break;
+            case 2:
+                userController.followUser(user);
+                tw.typeWithColor("You have Followed this user successfully!", Colors.GREEN, true);
+                tw.typeWithColor("Press any key to continue...", Colors.WHITE, true);
+                sc.nextLine();
+                showPage(userController.getUserById(user.getId()));
+                return;
+            case 3:
+                userController.unfollowUser(user);
+                tw.typeWithColor("You have Unfollowed this user successfully!", Colors.GREEN, true);
+                tw.typeWithColor("Press any key to continue...", Colors.WHITE, true);
+                sc.nextLine();
+                showPage(userController.getUserById(user.getId()));
+                return;
         }
     }
 

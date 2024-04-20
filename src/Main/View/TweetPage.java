@@ -36,6 +36,9 @@ public class TweetPage {
         //first choice : user page
         boolean isFollowing = Twitter.userController.isFollowing(t.getUserId());
         String status = isFollowing ? "(Following)" : "(Not Following)";
+        if (Authentication.currentUserId == t.getUserId()) {
+            status = "";
+        }
         tw.typeWithColor("2. ", Colors.PURPLE, false);
         tw.typeWithColor("@" + t.getUsername() + " " + status, Colors.BLUE, false);
         tw.typeWithColor("\t\t" + new Timestamp(t.getCreatedAt()), Colors.WHITE, true);

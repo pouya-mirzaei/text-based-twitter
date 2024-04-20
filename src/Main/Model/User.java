@@ -181,38 +181,8 @@ public class User {
     }
 
 
-    public void profileSettings() {
-        showUserInformation();
-
-        String[] menuItems = {"Edit profile", "Back"};
-
-        int userInput = 0;
-
-        boolean condition;
-        do {
-            Twitter.menu.displayMenu(menuItems, "Select an option to continue");
-
-            userInput = Twitter.getIntegerInput();
-
-            condition = userInput < 1 || userInput > menuItems.length;
-
-            if (condition) {
-                Twitter.tw.typeWithColor("Wrong choice, try again ...", Colors.RED, false);
-                try {
-                    Thread.sleep(1500);
-                } catch (Exception e) {
-
-                }
-            }
-        } while (condition);
-
-        switch (userInput) {
-            case 1:
-                editProfile();
-                break;
-            case 2:
-                Twitter.run();
-        }
+    public void profileSettings() throws SQLException {
+        Twitter.userPage.showPage(Authentication.currentUserData);
     }
 
     private void editProfile() {

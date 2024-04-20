@@ -155,5 +155,73 @@ public class TweetsManagerDb {
         }
     }
 
+    public List<User> getFollowers(int targetUserId) throws SQLException {
+        try (Connection connection = DriverManager.getConnection(Database.DATABASE_URL);
+             PreparedStatement statement = connection.prepareStatement("" +
+                     "SELECT u.*, " +
+                     "(SELECT COUNT(*) FROM follows WHERE follows.following_id = u.id) AS follower_count, " +
+                     "(SELECT COUNT(*) FROM follows WHERE follows.follower_id = u.id) AS following_count " +
+                     "FROM users AS u " +
+                     "INNER JOIN follows AS f ON u.id = f.follower_id " +
+                     "WHERE f.following_id = ?")) {
+            statement.setInt(1, targetUserId);
+
+            ResultSet rs = statement.executeQuery();
+            List<User> followers = new ArrayList<>();
+            while (rs.next()) {
+                User follower = new User(
+                        rs.getInt("id"),
+                        rs.getString("name"),
+                        rs.getString("lastname"),
+                        rs.getString("username"),
+                        rs.getString("password"),
+                        rs.getString("role"),
+                        rs.getString("bio"),
+                        rs.getDate("created_at").getTime(),
+                        rs.getInt("follower_count"),
+                        rs.getInt("following_count")
+                );
+                followers.add(follower);
+            }
+            return followers;
+        } catch (SQLException e) {
+            throw e;
+        }
+    }
+
+    public List<User> getFollowings(int targetUserId) throws SQLException {
+        try (Connection connection = DriverManager.getConnection(Database.DATABASE_URL);
+             PreparedStatement statement = connection.prepareStatement("" +
+                     "SELECT u.*, " +
+                     "(SELECT COUNT(*) FROM follows WHERE follows.following_id = u.id) AS follower_count, " +
+                     "(SELECT COUNT(*) FROM follows WHERE follows.follower_id = u.id) AS following_count " +
+                     "FROM users AS u " +
+                     "INNER JOIN follows AS f ON u.id = f.following_id " +
+                     "WHERE f.follower_id = ?")) {
+            statement.setInt(1, targetUserId);
+
+            ResultSet rs = statement.executeQuery();
+            List<User> followings = new ArrayList<>();
+            while (rs.next()) {
+                User following = new User(
+                        rs.getInt("id"),
+                        rs.getString("name"),
+                        rs.getString("lastname"),
+                        rs.getString("username"),
+                        rs.getString("password"),
+                        rs.getString("role"),
+                        rs.getString("bio"),
+                        rs.getDate("created_at").getTime(),
+                        rs.getInt("follower_count"),
+                        rs.getInt("following_count")
+                );
+                followings.add(following);
+            }
+            return followings;
+        } catch (SQLException e) {
+            throw e;
+        }
+    }
+
 
 }
