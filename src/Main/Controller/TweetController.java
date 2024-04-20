@@ -1,6 +1,7 @@
 package Main.Controller;
 
 import Main.Model.Tweet;
+import Main.Model.User;
 import Main.Services.Authentication;
 import Main.Services.Database;
 import Main.Twitter;
@@ -43,7 +44,7 @@ public class TweetController {
     // ----------------------------------------------------------------- DATABASE OPERATIONS
 
     // READ
-    public List<Tweet> getCurrentUserTweets() throws SQLException {
+    public List<Tweet> getUserTweets(User u) throws SQLException {
         try {
             Connection conn = DriverManager.getConnection(Database.DATABASE_URL);
             PreparedStatement stmn = conn.prepareStatement("SELECT * FROM tweets " +
@@ -51,7 +52,7 @@ public class TweetController {
                     "WHERE username = ? " +
                     "ORDER BY timestamp DESC");
 
-            stmn.setString(1, Authentication.currentUserData.getUsername());
+            stmn.setString(1, u.getUsername());
 
             ResultSet resultSet = stmn.executeQuery();
             List<Tweet> userTweets = new ArrayList<>();

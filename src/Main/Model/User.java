@@ -23,19 +23,10 @@ public class User {
     private String role;
     private String bio;
     private final long createAt;
+    private int followerCount;
+    private int followingCount;
 
-    public User(String name, String lastName, String username, String password, String bio) {
-        this.id = 0; // this will be changed in the db
-        this.name = name;
-        this.lastName = lastName;
-        this.username = username;
-        this.password = PasswordHasher.hashPassword(password);
-        this.bio = bio;
-        this.role = "USER";
-        this.createAt = new Date().getTime();
-    }
-
-    public User(int id, String name, String lastName, String username, String password, String role, String bio, long createAt) {
+    public User(int id, String name, String lastName, String username, String password, String role, String bio, long createAt, int followerCount, int followingCount) {
         this.id = id;
         this.name = name;
         this.lastName = lastName;
@@ -44,6 +35,9 @@ public class User {
         this.role = role;
         this.bio = bio;
         this.createAt = createAt;
+        this.followingCount = followingCount;
+        this.followerCount = followerCount;
+
     }
 
     // Getters and setters
@@ -65,6 +59,14 @@ public class User {
 
     public String getName() {
         return name;
+    }
+
+    public int getFollowerCount() {
+        return followerCount;
+    }
+
+    public int getFollowingCount() {
+        return followingCount;
     }
 
     public void changeName() throws Exception {

@@ -124,7 +124,9 @@ public class TweetsManagerDb {
     public List<User> getUsersWhoLikedTweet(long tweetId) throws SQLException {
         try (Connection connection = DriverManager.getConnection(Database.DATABASE_URL)) {
             PreparedStatement statement = connection.prepareStatement("" +
-                    "SELECT u.* " +
+                    "SELECT u.*, " +
+                    "(SELECT COUNT(*) FROM follows WHERE follows.following_id = u.id) AS follower_count, " +
+                    "(SELECT COUNT(*) FROM follows WHERE follows.follower_id = u.id) AS following_count " +
                     "FROM users AS u " +
                     "INNER JOIN likes AS l ON u.id = l.user_id " +
                     "WHERE l.tweet_id = ?");
@@ -141,15 +143,17 @@ public class TweetsManagerDb {
                         rs.getString("password"),
                         rs.getString("role"),
                         rs.getString("bio"),
-                        rs.getDate("created_at").getTime()
+                        rs.getDate("created_at").getTime(),
+                        rs.getInt("follower_count"),
+                        rs.getInt("following_count")
                 );
                 users.add(user);
             }
-
             return users;
         } catch (SQLException e) {
             throw e;
         }
     }
+
 
 }

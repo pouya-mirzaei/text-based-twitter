@@ -5,8 +5,10 @@ import Main.Services.Authentication;
 import Main.Services.Database;
 import Main.Services.PasswordHasher;
 import Main.Twitter;
+import Main.View.Colors;
 
 import java.sql.*;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 public class UserController {
@@ -15,7 +17,12 @@ public class UserController {
     // READ
     public User getUser(String username) {
         try (Connection connection = DriverManager.getConnection(Database.DATABASE_URL);
-             PreparedStatement stmt = connection.prepareStatement("SELECT * FROM users WHERE username = ?")) {
+             PreparedStatement stmt = connection.prepareStatement("" +
+                     "SELECT u.*, " +
+                     "(SELECT COUNT(*) FROM follows WHERE follows.following_id = u.id) AS follower_count, " +
+                     "(SELECT COUNT(*) FROM follows WHERE follows.follower_id = u.id) AS following_count " +
+                     "FROM users u " +
+                     "WHERE username = ?")) {
             stmt.setString(1, username);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
@@ -27,8 +34,9 @@ public class UserController {
                         rs.getString("password"),
                         rs.getString("role"),
                         rs.getString("bio"),
-                        rs.getDate("created_at").getTime()
-                );
+                        rs.getDate("created_at").getTime(),
+                        rs.getInt("follower_count"),
+                        rs.getInt("following_count"));
             }
             return null;
         } catch (SQLException e) {
@@ -38,8 +46,13 @@ public class UserController {
 
     public User getUserById(int id) {
         try (Connection connection = DriverManager.getConnection(Database.DATABASE_URL);
-             PreparedStatement stmt = connection.prepareStatement("SELECT * FROM users WHERE id = ?")) {
-            stmt.setInt(1, id); // Set username parameter securely
+             PreparedStatement stmt = connection.prepareStatement("" +
+                     "SELECT u.*, " +
+                     "(SELECT COUNT(*) FROM follows WHERE follows.following_id = u.id) AS follower_count, " +
+                     "(SELECT COUNT(*) FROM follows WHERE follows.follower_id = u.id) AS following_count " +
+                     "FROM users u " +
+                     "WHERE id = ?")) {
+            stmt.setInt(1, id);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 return new User(
@@ -50,7 +63,9 @@ public class UserController {
                         rs.getString("password"),
                         rs.getString("role"),
                         rs.getString("bio"),
-                        rs.getDate("created_at").getTime()
+                        rs.getDate("created_at").getTime(),
+                        rs.getInt("follower_count"),
+                        rs.getInt("following_count")
                 );
             }
             return null;
@@ -122,6 +137,46 @@ public class UserController {
         }
     }
 
+    public void followUser(User user) throws SQLException {
+        if (user.getId() == Authentication.currentUserId) {
+            throw new SQLException("You can not follow yourself!");
+        }
+
+        try (Connection connection = DriverManager.getConnection(Database.DATABASE_URL);
+             PreparedStatement stmt = connection.prepareStatement("" +
+                     "INSERT into follows (follower_id,following_id) " +
+                     "VALUES (?,?)")) {
+            stmt.setInt(1, Authentication.currentUserId);
+            stmt.setInt(2, user.getId());
+            stmt.executeUpdate();
+
+        } catch (SQLException e) {
+            throw e;
+        }
+    }
+
+    public boolean isFollowing(int targetUserId) throws SQLException {
+        try (Connection connection = DriverManager.getConnection(Database.DATABASE_URL);
+             PreparedStatement statement = connection.prepareStatement("" +
+                     "SELECT COUNT(*) > 0 AS is_following " +
+                     "FROM follows " +
+                     "WHERE follower_id = ? AND following_id = ?")) {
+            statement.setInt(1, Authentication.currentUserId);
+            statement.setInt(2, targetUserId);
+
+            ResultSet rs = statement.executeQuery();
+
+            if (rs.next()) {
+                return rs.getBoolean("is_following");
+            } else {
+                return false; // No results, user is not following
+            }
+        } catch (SQLException e) {
+            throw e;
+        }
+    }
+
+
     //UPDATE
     public void editUser(String username, User newUserData) throws SQLException {
         try (Connection connection = DriverManager.getConnection(Database.DATABASE_URL);
@@ -142,5 +197,31 @@ public class UserController {
     //DELETE
     public void deleteUser(String username) throws IllegalAccessException {
     }
+
+    public void unfollowUser(User user) throws SQLException {
+
+        try (Connection connection = DriverManager.getConnection(Database.DATABASE_URL);
+             PreparedStatement statement = connection.prepareStatement("" +
+                     "DELETE FROM follows " +
+                     "WHERE follower_id = ? AND following_id = ?")) {
+
+            statement.setInt(1, Authentication.currentUserId);
+            statement.setInt(2, user.getId());
+
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            throw e;
+        }
+    }
+
+
+    public void printAListOfUsers(List<User> users) {
+        int userCounter = 1;
+        for (User user : users) {
+            Twitter.tw.typeWithColor("  " + userCounter++ + ". ", Colors.PURPLE, false);
+            Twitter.tw.typeWithColor("@" + user.getUsername(), Colors.YELLOW, true);
+        }
+    }
+
 
 }

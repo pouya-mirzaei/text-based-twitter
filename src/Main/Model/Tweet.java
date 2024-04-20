@@ -151,7 +151,7 @@ public class Tweet {
                         return;
                     } else {
                         Twitter.tw.typeWithColor("wrong choice, try again...", Colors.RED, true);
-                        i -= 3;
+                        i -= paginationCount;
                     }
 
                 }

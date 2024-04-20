@@ -89,7 +89,7 @@ public class Twitter {
                     Tweet.previewTweets(tweetController.getAllTweets());
                     break;
                 case 2:
-                    Tweet.previewTweets(tweetController.getCurrentUserTweets());
+                    Tweet.previewTweets(tweetController.getUserTweets(Authentication.currentUserData));
                     break;
                 case 3:
                     // search

@@ -34,8 +34,10 @@ public class TweetPage {
         // constant tweet data (username , content and likes) :
 
         //first choice : user page
+        boolean isFollowing = Twitter.userController.isFollowing(t.getUserId());
+        String status = isFollowing ? "(Following)" : "(Not Following)";
         tw.typeWithColor("2. ", Colors.PURPLE, false);
-        tw.typeWithColor("@" + t.getUsername(), Colors.BLUE, false);
+        tw.typeWithColor("@" + t.getUsername() + " " + status, Colors.BLUE, false);
         tw.typeWithColor("\t\t" + new Timestamp(t.getCreatedAt()), Colors.WHITE, true);
 
         tw.typeWithColor("   Content : ", Colors.YELLOW, false);
@@ -100,21 +102,23 @@ public class TweetPage {
 
     }
 
-    private void handleAuthorPage(Tweet t) {
+    private void handleAuthorPage(Tweet t) throws SQLException {
         userPage.showPage(Twitter.userController.getUserById(t.getUserId()));
     }
 
     private void handleUserLiked(Tweet t) throws SQLException {
         tw.typeWithColor("The users who liked this tweet : ", Colors.BLUE, true);
         List<User> users = tweetsManagerDb.getUsersWhoLikedTweet(t.getId());
-        int userCounter = 1;
-        for (User user : users) {
-            tw.typeWithColor("  " + userCounter++ + ". ", Colors.PURPLE, false);
-            tw.typeWithColor("@" + user.getUsername(), Colors.YELLOW, true);
-        }
-        tw.typeWithColor("Select your choice :", Colors.WHITE, true);
+        Twitter.userController.printAListOfUsers(users);
+
+        tw.typeWithColor("Select the user that you want to visit :(press -1 to return)", Colors.WHITE, true);
         int choice = Twitter.getIntegerInput();
         sc.nextLine();
+
+        if (choice == -1) {
+            showPage(t);
+            return;
+        }
 
         if (choice > 0 && choice <= users.size()) {
             userPage.showPage(users.get(choice - 1));
