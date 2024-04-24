@@ -8,6 +8,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 public class Tweet {
 
@@ -122,11 +123,17 @@ public class Tweet {
                 if (i % paginationCount == paginationCount - 1 && i != tweets.size() - 1) {
                     Twitter.tw.typeWithColor("Type 'more' to see more tweets", Colors.YELLOW, true);
                     Twitter.tw.typeWithColor("Or Enter the number of the tweet that you want to see", Colors.YELLOW, true);
-                    String text;
+                    Twitter.tw.typeWithColor("Or Press -1 to return to the main menu", Colors.YELLOW, true);
+                    String text = null;
+
 
                     int id = 0;
                     do {
                         text = Twitter.scanner.nextLine();
+                        if (Objects.equals(text, "-1")) {
+                            Twitter.run();
+                            return;
+                        }
                         if (text.equals("more")) {
                             break;
                         }
