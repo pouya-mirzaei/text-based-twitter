@@ -17,9 +17,8 @@ public class Tweet {
     private long createdAt;
     private int userId;
     private String username;
-    private List<User> liked;
-    private List<User> retweets;
     private static final int paginationCount = 3;
+    private int likeCounts;
 
     // Getters and Setters
 
@@ -29,8 +28,6 @@ public class Tweet {
         this.content = content;
         this.userId = userId;
         this.createdAt = new Date().getTime();
-        this.liked = new ArrayList<>();
-        this.retweets = new ArrayList<>();
     }
 
     public Tweet(int id, String content, long createdAt, int userId) {
@@ -38,8 +35,15 @@ public class Tweet {
         this.content = content;
         this.createdAt = createdAt;
         this.userId = userId;
-        this.liked = new ArrayList<>();
-        this.retweets = new ArrayList<>();
+    }
+
+    public Tweet(int id, String content, long createdAt, int userId, String username, int likeCounts) {
+        this.id = id;
+        this.content = content;
+        this.createdAt = createdAt;
+        this.userId = userId;
+        this.username = username;
+        this.likeCounts = likeCounts;
     }
 
     public String getUsername() {
@@ -82,22 +86,6 @@ public class Tweet {
         this.userId = userId;
     }
 
-    public List<User> getLiked() {
-        return liked;
-    }
-
-    public void setLiked(List<User> liked) {
-        this.liked = liked;
-    }
-
-    public List<User> getRetweets() {
-        return retweets;
-    }
-
-    public void setRetweets(List<User> retweets) {
-        this.retweets = retweets;
-
-    }
 
     public static void previewTweets(List<Tweet> tweets) throws SQLException {
 
@@ -195,6 +183,10 @@ public class Tweet {
             throw e;
         }
 
+    }
+
+    public int getLikeCounts() {
+        return likeCounts;
     }
 }
 

@@ -11,6 +11,7 @@ import Main.View.Typewriter;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Scanner;
 
 public class TweetController {
@@ -22,9 +23,14 @@ public class TweetController {
         String message = "Want to tweet ? " +
                 "\nEnter your tweet message:";
         tw.typeWithColor(message, Colors.CYAN, true);
+        tw.typeWithColor("Or press -1 to return", Colors.YELLOW, true);
         sc.nextLine(); // clear the input
 
         String tweet_content = sc.nextLine();
+        if (Objects.equals(tweet_content, "-1")) {
+            Twitter.run();
+            return;
+        }
 
         try {
             createTweet(id, tweet_content);

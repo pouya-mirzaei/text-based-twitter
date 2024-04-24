@@ -23,6 +23,7 @@ public class Twitter {
     public static CommentController commentController;
     public static Authentication auth;
     public static TweetsManagerDb tweetsManagerDb;
+    public static HomePage homePage;
     public static UserPage userPage;
     public static TweetPage tweetPage;
 
@@ -36,6 +37,7 @@ public class Twitter {
         auth = new Authentication();
         db = new Database();
         tweetsManagerDb = new TweetsManagerDb();
+        homePage = new HomePage();
         userPage = new UserPage();
         tweetPage = new TweetPage();
     }
@@ -74,19 +76,14 @@ public class Twitter {
             condition = userInput < 1 || userInput > mainMenu.length;
 
             if (condition) {
-                tw.typeWithColor("Wrong choice, try again ...", Colors.RED, false);
-                try {
-                    Thread.sleep(1500);
-                } catch (Exception e) {
-                    //
-                }
+                tw.typeWithColor("Wrong choice, try again ...", Colors.RED, true);
             }
         } while (condition);
 
         try {
             switch (userInput) {
                 case 1:
-                    Tweet.previewTweets(tweetController.getAllTweets());
+                    homePage.showPage();
                     break;
                 case 2:
                     Tweet.previewTweets(tweetController.getUserTweets(Authentication.currentUserData));

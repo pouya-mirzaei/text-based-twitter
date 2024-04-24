@@ -8,7 +8,9 @@ import Main.Twitter;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class TweetsManagerDb {
     public boolean likeTweet(int tweetId) throws SQLException {
@@ -221,6 +223,90 @@ public class TweetsManagerDb {
         } catch (SQLException e) {
             throw e;
         }
+    }
+
+    public List<Tweet> getTweetsOrderedByLikes() throws SQLException {
+        List<Tweet> tweets = new ArrayList<>();
+        try (Connection connection = DriverManager.getConnection(Database.DATABASE_URL)) {
+            // Get all tweets
+            PreparedStatement stmt1 = connection.prepareStatement("SELECT * FROM tweets " +
+                    "INNER JOIN users on users.id = tweets.user_id");
+            ResultSet rs1 = stmt1.executeQuery();
+            while (rs1.next()) {
+                int tweetId = rs1.getInt("id");
+
+                // Count likes for each tweet (assuming a separate likes table)
+                PreparedStatement stmt2 = connection.prepareStatement("SELECT COUNT(*) AS likes_count FROM likes WHERE tweet_id = ?");
+                stmt2.setInt(1, tweetId);
+                ResultSet rs2 = stmt2.executeQuery();
+
+                int likesCount = 0;
+                if (rs2.next()) {
+                    likesCount = rs2.getInt("likes_count");
+                }
+
+                // Create Tweet object with likes count
+                tweets.add(new Tweet(
+                        tweetId,
+                        rs1.getString("tweet_content"),
+                        rs1.getTimestamp("created_at").getTime(),
+                        rs1.getInt("user_id"),
+                        rs1.getString("username"),
+                        likesCount
+                ));
+            }
+        }
+        return tweets.stream().sorted(Comparator.comparingInt(Tweet::getLikeCounts).reversed()).collect(Collectors.toList());
+    }
+
+
+    public List<Tweet> getFollowingUsersTweets(int currentUserId) throws SQLException {
+        List<Tweet> tweets = new ArrayList<>();
+        try (Connection connection = DriverManager.getConnection(Database.DATABASE_URL)) {
+            // Get all users followed by the current user
+            PreparedStatement stmt1 = connection.prepareStatement("SELECT following_id FROM follows WHERE follower_id = ?");
+            stmt1.setInt(1, currentUserId);
+            ResultSet rs1 = stmt1.executeQuery();
+
+            List<Integer> followingUserIds = new ArrayList<>();
+            while (rs1.next()) {
+                followingUserIds.add(rs1.getInt("following_id"));
+            }
+
+            // Check if any users are followed (avoid unnecessary query)
+            if (!followingUserIds.isEmpty()) {
+                // Construct a query string to fetch tweets from following users (using IN clause)
+                StringBuilder tweetQuery = new StringBuilder("SELECT * FROM tweets " +
+                        "INNER JOIN users on users.id = tweets.user_id " +
+                        "WHERE user_id IN (");
+                for (int i = 0; i < followingUserIds.size(); i++) {
+                    tweetQuery.append("?");
+                    if (i != followingUserIds.size() - 1) {
+                        tweetQuery.append(",");
+                    }
+                }
+                tweetQuery.append(")");
+                tweetQuery.append("ORDER BY timestamp DESC");
+
+                // Prepare and execute the tweet query
+                PreparedStatement stmt2 = connection.prepareStatement(tweetQuery.toString());
+                for (int i = 0; i < followingUserIds.size(); i++) {
+                    stmt2.setInt(i + 1, followingUserIds.get(i));
+                }
+                ResultSet rs2 = stmt2.executeQuery();
+
+                while (rs2.next()) {
+                    tweets.add(new Tweet(
+                            rs2.getInt("id"),
+                            rs2.getString("tweet_content"),
+                            rs2.getTimestamp("timestamp").getTime(),
+                            rs2.getInt("user_id")
+                    ));
+                    tweets.get(tweets.size() - 1).setUsername(rs2.getString("username"));
+                }
+            }
+        }
+        return tweets;
     }
 
 
