@@ -23,7 +23,8 @@ public class UserPage {
     private final int FOLLOWED_PAGE = 3;
     private int pageStatus; // 1: author , 2: not followed, 3: is following
 
-    public void showPage(User user) throws SQLException {
+    public void showPage(int userId) throws SQLException {
+        User user = userController.getUserById(userId);
         setPageStatus(user);
         tw.typeWithColor("***************************************************************************", Colors.BLUE, true);
 
@@ -103,17 +104,17 @@ public class UserPage {
         sc.nextLine();
 
         if (choice == -1) {
-            showPage(user);
+            showPage(user.getId());
             return;
         }
 
         if (choice > 0 && choice <= followerUsers.size()) {
-            showPage(followerUsers.get(choice - 1));
+            showPage(followerUsers.get(choice - 1).getId());
         } else {
             tw.typeWithColor("Wrong choice!", Colors.RED, true);
             tw.typeWithColor("Press any key to try again!", Colors.RED, true);
             sc.nextLine();
-            showPage(user);
+            showPage(user.getId());
         }
 
     }
@@ -127,17 +128,17 @@ public class UserPage {
         sc.nextLine();
 
         if (choice == -1) {
-            showPage(user);
+            showPage(user.getId());
             return;
         }
 
         if (choice > 0 && choice <= followingUsers.size()) {
-            showPage(followingUsers.get(choice - 1));
+            showPage(followingUsers.get(choice - 1).getId());
         } else {
             tw.typeWithColor("Wrong choice!", Colors.RED, true);
             tw.typeWithColor("Press any key to try again!", Colors.RED, true);
             sc.nextLine();
-            showPage(user);
+            showPage(user.getId());
         }
 
     }
@@ -153,14 +154,15 @@ public class UserPage {
                 tw.typeWithColor("You have Followed this user successfully!", Colors.GREEN, true);
                 tw.typeWithColor("Press any key to continue...", Colors.WHITE, true);
                 sc.nextLine();
-                showPage(userController.getUserById(user.getId()));
+                showPage(user.getId());
                 return;
             case 3:
                 userController.unfollowUser(user);
                 tw.typeWithColor("You have Unfollowed this user successfully!", Colors.GREEN, true);
                 tw.typeWithColor("Press any key to continue...", Colors.WHITE, true);
                 sc.nextLine();
-                showPage(userController.getUserById(user.getId()));
+                showPage(user.getId()
+                );
                 return;
         }
     }
@@ -180,7 +182,7 @@ public class UserPage {
 
     }
 
-    public void setStatus(int s) {
+    private void setStatus(int s) {
         this.pageStatus = s;
     }
 

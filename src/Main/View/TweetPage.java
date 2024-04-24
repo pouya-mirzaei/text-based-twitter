@@ -106,7 +106,7 @@ public class TweetPage {
     }
 
     private void handleAuthorPage(Tweet t) throws SQLException {
-        userPage.showPage(Twitter.userController.getUserById(t.getUserId()));
+        userPage.showPage(t.getUserId());
     }
 
     private void handleUserLiked(Tweet t) throws SQLException {
@@ -131,7 +131,7 @@ public class TweetPage {
         }
 
         if (choice > 0 && choice <= users.size()) {
-            userPage.showPage(users.get(choice - 1));
+            userPage.showPage(users.get(choice - 1).getId());
         } else {
             tw.typeWithColor("Wrong choice!", Colors.RED, true);
             tw.typeWithColor("Press any key to try again!", Colors.RED, true);

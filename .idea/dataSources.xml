@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="twitter" uuid="8302e11b-cb53-48da-8b59-eef63d451441">
+    <data-source source="LOCAL" name="twitter" uuid="85d1449b-69aa-4e1b-99cc-b4cccc3479c2">
       <driver-ref>sqlite.xerial</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.sqlite.JDBC</jdbc-driver>

@@ -31,7 +31,7 @@ public class TweetController {
             tw.typeWithColor("You have tweeted a new post !", Colors.CYAN, true);
             tw.typeWithColor(" Press any key to see your tweet", Colors.CYAN, true);
             sc.nextLine();
-            Twitter.tweetPage.showPage(getTweetById(getCurrentUserLastTweetId()));
+            Twitter.tweetPage.showPage(getCurrentUserLastTweet());
 
 
         } catch (SQLException e) {
@@ -150,10 +150,11 @@ public class TweetController {
         }
     }
 
-    public int getCurrentUserLastTweetId() throws SQLException {
+    public Tweet getCurrentUserLastTweet() throws SQLException {
         try (Connection connection = DriverManager.getConnection(Database.DATABASE_URL);
              PreparedStatement prepareStatement = connection.prepareStatement("" +
                      "SELECT * FROM tweets " +
+                     "INNER JOIN users ON tweets.user_id = users.id " +
                      "WHERE user_id = ? " +
                      "ORDER BY timestamp DESC");
         ) {
@@ -162,7 +163,14 @@ public class TweetController {
             ResultSet rs = prepareStatement.executeQuery();
 
             if (rs.next()) {
-                return rs.getInt("id");
+                Tweet t = new Tweet(
+                        rs.getInt("id"),
+                        rs.getString("tweet_content"),
+                        rs.getTimestamp("timestamp").getTime(),
+                        rs.getInt("user_id")
+                );
+                t.setUsername(rs.getString("username"));
+                return t;
             } else {
                 throw new SQLException("There was an error finding the tweet, please try again later...");
             }

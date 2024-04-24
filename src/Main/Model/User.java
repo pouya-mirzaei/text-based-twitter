@@ -182,7 +182,7 @@ public class User {
 
 
     public void profileSettings() throws SQLException {
-        Twitter.userPage.showPage(Authentication.currentUserData);
+        Twitter.userPage.showPage(Authentication.currentUserId);
     }
 
     public void editProfile() {
@@ -227,7 +227,7 @@ public class User {
                 case 3:
                     changeBio();
                 case 4:
-                    Twitter.run();
+                    Twitter.userPage.showPage(Authentication.currentUserId);
                     return;
             }
             Twitter.tw.typeWithColor("You edited your profile successfully :)", Colors.GREEN, true);

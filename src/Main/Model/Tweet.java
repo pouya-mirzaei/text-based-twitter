@@ -18,7 +18,7 @@ public class Tweet {
     private String username;
     private List<User> liked;
     private List<User> retweets;
-    private static final int paginationCount = 5;
+    private static final int paginationCount = 3;
 
     // Getters and Setters
 
